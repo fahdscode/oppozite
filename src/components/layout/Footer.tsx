@@ -1,0 +1,123 @@
+import { Link } from "react-router-dom";
+import { Instagram, Twitter } from "lucide-react";
+
+const footerLinks = {
+  shop: [
+    { name: "New Arrivals", path: "/new" },
+    { name: "Best Sellers", path: "/best-sellers" },
+    { name: "Sale", path: "/sale" },
+    { name: "Gift Cards", path: "/gift-cards" },
+  ],
+  help: [
+    { name: "FAQs", path: "/faq" },
+    { name: "Shipping", path: "/shipping" },
+    { name: "Returns", path: "/returns" },
+    { name: "Size Guide", path: "/size-guide" },
+  ],
+  about: [
+    { name: "Our Story", path: "/about" },
+    { name: "Sustainability", path: "/sustainability" },
+    { name: "Careers", path: "/careers" },
+    { name: "Contact", path: "/contact" },
+  ],
+};
+
+export const Footer = () => {
+  return (
+    <footer className="bg-foreground text-background">
+      {/* Newsletter */}
+      <div className="border-b border-background/20">
+        <div className="container py-16">
+          <div className="max-w-xl mx-auto text-center">
+            <h3 className="font-display text-4xl md:text-5xl mb-4">JOIN THE VYBE</h3>
+            <p className="text-background/60 mb-8 text-sm">
+              Subscribe for exclusive drops, early access & 10% off your first order
+            </p>
+            <form className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 bg-transparent border border-background/30 px-6 py-4 text-sm placeholder:text-background/40 focus:outline-none focus:border-background transition-colors"
+              />
+              <button type="submit" className="bg-background text-foreground px-8 py-4 text-sm tracking-widest uppercase font-medium hover:bg-background/90 transition-colors">
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* Links */}
+      <div className="container py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+          <div className="col-span-2 md:col-span-1">
+            <Link to="/" className="font-display text-4xl tracking-wider">
+              VYBE
+            </Link>
+            <p className="mt-4 text-sm text-background/60 max-w-xs">
+              Bold streetwear for the next generation. Express yourself. Be authentic.
+            </p>
+            <div className="flex gap-4 mt-6">
+              <a href="#" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="#" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-display text-lg mb-4 tracking-wide">Shop</h4>
+            <ul className="space-y-3">
+              {footerLinks.shop.map((link) => (
+                <li key={link.path}>
+                  <Link to={link.path} className="text-sm text-background/60 hover:text-background transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display text-lg mb-4 tracking-wide">Help</h4>
+            <ul className="space-y-3">
+              {footerLinks.help.map((link) => (
+                <li key={link.path}>
+                  <Link to={link.path} className="text-sm text-background/60 hover:text-background transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display text-lg mb-4 tracking-wide">About</h4>
+            <ul className="space-y-3">
+              {footerLinks.about.map((link) => (
+                <li key={link.path}>
+                  <Link to={link.path} className="text-sm text-background/60 hover:text-background transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom */}
+      <div className="border-t border-background/20">
+        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/40">
+          <p>© 2024 VYBE. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link to="/privacy" className="hover:text-background transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-background transition-colors">Terms</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};

@@ -1,0 +1,78 @@
+import { Product } from "@/types/product";
+
+export const products: Product[] = [
+  {
+    id: "1",
+    name: "Oversized Graphic Tee",
+    price: 65,
+    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=800&fit=crop",
+    hoverImage: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&h=800&fit=crop",
+    category: "Tops",
+    sizes: ["XS", "S", "M", "L", "XL"],
+    isNew: true,
+  },
+  {
+    id: "2",
+    name: "Distressed Wide Leg Jeans",
+    price: 120,
+    originalPrice: 160,
+    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=800&fit=crop",
+    hoverImage: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=800&fit=crop",
+    category: "Bottoms",
+    sizes: ["26", "28", "30", "32", "34"],
+  },
+  {
+    id: "3",
+    name: "Cropped Puffer Jacket",
+    price: 195,
+    image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&h=800&fit=crop",
+    category: "Outerwear",
+    sizes: ["XS", "S", "M", "L"],
+    isNew: true,
+  },
+  {
+    id: "4",
+    name: "Mesh Layer Tank",
+    price: 45,
+    image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop",
+    category: "Tops",
+    sizes: ["XS", "S", "M", "L", "XL"],
+  },
+  {
+    id: "5",
+    name: "Cargo Parachute Pants",
+    price: 135,
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=800&fit=crop",
+    category: "Bottoms",
+    sizes: ["XS", "S", "M", "L"],
+    isNew: true,
+  },
+  {
+    id: "6",
+    name: "Structured Blazer",
+    price: 225,
+    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=800&fit=crop",
+    category: "Outerwear",
+    sizes: ["XS", "S", "M", "L", "XL"],
+  },
+  {
+    id: "7",
+    name: "Platform Chunky Sneakers",
+    price: 180,
+    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&h=800&fit=crop",
+    category: "Footwear",
+    sizes: ["36", "37", "38", "39", "40", "41", "42"],
+  },
+  {
+    id: "8",
+    name: "Asymmetric Midi Skirt",
+    price: 95,
+    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0uj7q?w=600&h=800&fit=crop",
+    hoverImage: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=800&fit=crop",
+    category: "Bottoms",
+    sizes: ["XS", "S", "M", "L"],
+    isSoldOut: true,
+  },
+];
+
+export const categories = ["All", "Tops", "Bottoms", "Outerwear", "Footwear", "Accessories"];
