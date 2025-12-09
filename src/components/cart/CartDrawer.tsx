@@ -1,0 +1,171 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Minus, Plus, ShoppingBag } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { Link } from "react-router-dom";
+
+export const CartDrawer = () => {
+  const { items, isCartOpen, closeCart, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
+
+  return (
+    <AnimatePresence>
+      {isCartOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-foreground/40 z-50"
+            onClick={closeCart}
+          />
+
+          {/* Drawer */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-background z-50 flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <div className="flex items-center gap-3">
+                <ShoppingBag className="w-5 h-5" />
+                <span className="font-display text-2xl">YOUR BAG</span>
+                <span className="text-sm text-muted-foreground">({totalItems})</span>
+              </div>
+              <button
+                onClick={closeCart}
+                className="p-2 hover:bg-muted transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Items */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {items.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col items-center justify-center h-full text-center"
+                >
+                  <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mb-4" />
+                  <p className="text-lg font-medium mb-2">Your bag is empty</p>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Add some items to get started
+                  </p>
+                  <Link
+                    to="/shop"
+                    onClick={closeCart}
+                    className="btn-primary"
+                  >
+                    Start Shopping
+                  </Link>
+                </motion.div>
+              ) : (
+                <div className="space-y-6">
+                  <AnimatePresence mode="popLayout">
+                    {items.map((item, index) => (
+                      <motion.div
+                        key={`${item.product.id}-${item.size}`}
+                        layout
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20, height: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className="flex gap-4"
+                      >
+                        {/* Image */}
+                        <div className="w-24 h-32 bg-muted overflow-hidden flex-shrink-0">
+                          <img
+                            src={item.product.image}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Details */}
+                        <div className="flex-1 flex flex-col">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-medium text-sm">{item.product.name}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">Size: {item.size}</p>
+                            </div>
+                            <button
+                              onClick={() => removeItem(item.product.id, item.size)}
+                              className="p-1 hover:bg-muted transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="mt-auto flex items-center justify-between">
+                            {/* Quantity */}
+                            <div className="flex items-center border border-border">
+                              <button
+                                onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
+                                className="p-2 hover:bg-muted transition-colors"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-8 text-center text-sm">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
+                                className="p-2 hover:bg-muted transition-colors"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+
+                            {/* Price */}
+                            <span className="font-medium">
+                              ${(item.product.price * item.quantity).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {items.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-6 border-t border-border space-y-4"
+              >
+                {/* Subtotal */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Subtotal</span>
+                  <span className="text-lg font-medium">${totalPrice.toFixed(2)}</span>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Shipping and taxes calculated at checkout
+                </p>
+
+                {/* Actions */}
+                <div className="space-y-3">
+                  <button className="w-full btn-primary">
+                    Checkout
+                  </button>
+                  <button
+                    onClick={closeCart}
+                    className="w-full btn-outline"
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
