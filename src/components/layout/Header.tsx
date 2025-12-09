@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 const navLinks = [
   { name: "Shop All", path: "/shop" },
@@ -13,6 +14,7 @@ const navLinks = [
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { totalItems, openCart } = useCart();
 
   return (
     <>
@@ -59,11 +61,19 @@ export const Header = () => {
               <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
                 <User className="w-5 h-5" />
               </button>
-              <button className="p-2 btn-ghost flex items-center justify-center relative">
+              <button 
+                onClick={openCart}
+                className="p-2 btn-ghost flex items-center justify-center relative"
+              >
                 <ShoppingBag className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-foreground text-background text-[10px] flex items-center justify-center">
-                  0
-                </span>
+                <motion.span
+                  key={totalItems}
+                  initial={{ scale: 0.5 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 w-5 h-5 bg-foreground text-background text-[10px] flex items-center justify-center"
+                >
+                  {totalItems}
+                </motion.span>
               </button>
             </div>
           </div>

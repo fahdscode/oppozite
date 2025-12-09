@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus } from "lucide-react";
 import { Product } from "@/types/product";
+import { useCart } from "@/context/CartContext";
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -12,6 +13,15 @@ interface QuickViewModalProps {
 export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const { addItem } = useCart();
+
+  const handleAddToBag = () => {
+    if (!product || !selectedSize) return;
+    addItem(product, selectedSize, quantity);
+    onClose();
+    setSelectedSize(null);
+    setQuantity(1);
+  };
 
   if (!product) return null;
 
@@ -108,6 +118,9 @@ export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps
                         </button>
                       ))}
                     </div>
+                    {!selectedSize && (
+                      <p className="text-xs text-muted-foreground mt-2">Please select a size</p>
+                    )}
                   </div>
 
                   {/* Quantity */}
@@ -138,8 +151,11 @@ export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps
                   className="mt-8 space-y-3"
                 >
                   <button
-                    disabled={product.isSoldOut}
-                    className={`w-full btn-primary ${product.isSoldOut ? "opacity-50 cursor-not-allowed" : ""}`}
+                    onClick={handleAddToBag}
+                    disabled={product.isSoldOut || !selectedSize}
+                    className={`w-full btn-primary ${
+                      (product.isSoldOut || !selectedSize) ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   >
                     {product.isSoldOut ? "Sold Out" : "Add to Bag"}
                   </button>
