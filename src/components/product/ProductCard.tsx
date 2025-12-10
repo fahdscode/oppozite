@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Product } from "@/types/product";
 
@@ -75,8 +76,10 @@ export const ProductCard = ({ product, onQuickView, index = 0 }: ProductCardProp
       </div>
 
       {/* Details */}
-      <div className="mt-4 space-y-1">
-        <h3 className="text-sm font-medium tracking-wide">{product.name}</h3>
+      <Link to={`/product/${product.id}`} className="block mt-4 space-y-1 group/link">
+        <h3 className="text-sm font-medium tracking-wide group-hover/link:underline">
+          {product.name}
+        </h3>
         <div className="flex items-center gap-2">
           <span className="text-sm">${product.price}</span>
           {product.originalPrice && (
@@ -85,7 +88,7 @@ export const ProductCard = ({ product, onQuickView, index = 0 }: ProductCardProp
             </span>
           )}
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 };

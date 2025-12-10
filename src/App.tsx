@@ -10,6 +10,7 @@ import Shop from "./pages/Shop";
 import NewArrivals from "./pages/NewArrivals";
 import Collections from "./pages/Collections";
 import About from "./pages/About";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const AnimatedRoutes = () => {
         <Route path="/new" element={<NewArrivals />} />
         <Route path="/collections" element={<Collections />} />
         <Route path="/about" element={<About />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
