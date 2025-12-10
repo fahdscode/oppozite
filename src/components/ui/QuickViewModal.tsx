@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus } from "lucide-react";
 import { Product } from "@/types/product";
@@ -15,22 +16,31 @@ export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
 
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedSize(null);
+      setQuantity(1);
+    }
+  }, [isOpen]);
+
   const handleAddToBag = () => {
     if (!product || !selectedSize) return;
     addItem(product, selectedSize, quantity);
     onClose();
-    setSelectedSize(null);
-    setQuantity(1);
   };
 
-  if (!product) return null;
+  const handleViewDetails = () => {
+    onClose();
+  };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <AnimatePresence mode="wait">
+      {isOpen && product && (
         <>
           {/* Backdrop */}
           <motion.div
+            key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -41,6 +51,7 @@ export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps
 
           {/* Modal */}
           <motion.div
+            key="modal"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -159,9 +170,13 @@ export const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps
                   >
                     {product.isSoldOut ? "Sold Out" : "Add to Bag"}
                   </button>
-                  <button className="w-full btn-outline">
+                  <Link
+                    to={`/product/${product.id}`}
+                    onClick={handleViewDetails}
+                    className="w-full btn-outline block text-center"
+                  >
                     View Full Details
-                  </button>
+                  </Link>
                 </motion.div>
               </div>
             </div>
