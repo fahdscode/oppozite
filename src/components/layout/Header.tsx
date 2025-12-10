@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { SearchOverlay } from "@/components/search/SearchOverlay";
 
 const navLinks = [
   { name: "Shop All", path: "/shop" },
@@ -13,6 +14,7 @@ const navLinks = [
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const { totalItems, openCart } = useCart();
 
@@ -55,7 +57,10 @@ export const Header = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2 md:gap-4">
-              <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
+              <button 
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 btn-ghost flex items-center justify-center"
+              >
                 <Search className="w-5 h-5" />
               </button>
               <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
@@ -137,6 +142,9 @@ export const Header = () => {
           </>
         )}
       </AnimatePresence>
+
+      {/* Search Overlay */}
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 };
