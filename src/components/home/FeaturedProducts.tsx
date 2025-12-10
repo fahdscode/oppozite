@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { products } from "@/data/products";
-import { ProductCard } from "@/components/product/ProductCard";
-import { QuickViewModal } from "@/components/ui/QuickViewModal";
-import { Product } from "@/types/product";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
+import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+import { ShopifyProduct } from "@/lib/shopify";
+import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 
 export const FeaturedProducts = () => {
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-  const featuredProducts = products.slice(0, 4);
+  const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+  const { data: products, isLoading, error } = useShopifyProducts(4);
 
   return (
     <section className="py-24 md:py-32">
@@ -44,19 +44,36 @@ export const FeaturedProducts = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-          {featuredProducts.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onQuickView={setQuickViewProduct}
-              index={index}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">Failed to load products</p>
+          </div>
+        ) : products && products.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {products.map((product, index) => (
+              <ShopifyProductCard
+                key={product.node.id}
+                product={product}
+                onQuickView={setQuickViewProduct}
+                index={index}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 border border-dashed border-border rounded-lg">
+            <p className="text-muted-foreground mb-2">No products found</p>
+            <p className="text-sm text-muted-foreground">
+              Tell me what products you'd like to add to your store!
+            </p>
+          </div>
+        )}
       </div>
 
-      <QuickViewModal
+      <ShopifyQuickViewModal
         product={quickViewProduct}
         isOpen={!!quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
