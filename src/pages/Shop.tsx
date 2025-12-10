@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { products, categories } from "@/data/products";
-import { ProductCard } from "@/components/product/ProductCard";
-import { QuickViewModal } from "@/components/ui/QuickViewModal";
-import { Product } from "@/types/product";
+import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
+import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+import { ShopifyProduct } from "@/lib/shopify";
+import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 
 const ShopPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-
-  const filteredProducts = selectedCategory === "All"
-    ? products
-    : products.filter(p => p.category === selectedCategory);
+  const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+  const { data: products, isLoading, error } = useShopifyProducts(50);
 
   return (
     <Layout>
@@ -29,56 +26,45 @@ const ShopPage = () => {
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="sticky top-16 md:top-20 z-40 bg-background border-b border-border">
-        <div className="container py-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 -mb-2 scrollbar-hide">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 text-xs tracking-widest uppercase whitespace-nowrap transition-all ${
-                  selectedCategory === category
-                    ? "bg-foreground text-background"
-                    : "border border-border hover:border-foreground"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Products */}
       <section className="py-12 md:py-20">
         <div className="container">
-          <motion.div
-            key={selectedCategory}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"
-          >
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onQuickView={setQuickViewProduct}
-                index={index}
-              />
-            ))}
-          </motion.div>
-
-          {filteredProducts.length === 0 && (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
             <div className="text-center py-20">
-              <p className="text-muted-foreground">No products found in this category.</p>
+              <p className="text-muted-foreground">Failed to load products</p>
+            </div>
+          ) : products && products.length > 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"
+            >
+              {products.map((product, index) => (
+                <ShopifyProductCard
+                  key={product.node.id}
+                  product={product}
+                  onQuickView={setQuickViewProduct}
+                  index={index}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <div className="text-center py-20 border border-dashed border-border rounded-lg">
+              <p className="text-xl font-medium mb-2">No products found</p>
+              <p className="text-muted-foreground">
+                Tell me what products you'd like to add to your store!
+              </p>
             </div>
           )}
         </div>
       </section>
 
-      <QuickViewModal
+      <ShopifyQuickViewModal
         product={quickViewProduct}
         isOpen={!!quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
