@@ -34,7 +34,7 @@ export const Hero = () => {
             transition={{ duration: 0.6 }}
             className="text-xs tracking-[0.3em] uppercase text-background/60 mb-8"
           >
-            Fall / Winter 2024
+            New Season Drop
           </motion.p>
 
           {/* Main Title */}
@@ -42,13 +42,11 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display text-[15vw] md:text-[12vw] leading-[0.85] tracking-tight mb-8"
+            className="font-display text-[12vw] md:text-[10vw] leading-[0.9] tracking-tight mb-8"
           >
-            DEFINE
+            OPPOZITE
             <br />
-            YOUR
-            <br />
-            <span className="italic">VYBE</span>
+            <span className="italic text-[8vw] md:text-[6vw]">WEARS</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -58,8 +56,8 @@ export const Hero = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg md:text-xl text-background/70 max-w-xl mx-auto mb-12 font-light"
           >
-            Bold streetwear for those who dare to stand out. 
-            Authentic. Unapologetic. You.
+            Stand out from the crowd. Premium streetwear 
+            designed for those who dare to be different.
           </motion.p>
 
           {/* CTA Buttons */}

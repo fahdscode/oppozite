@@ -29,7 +29,7 @@ export const Footer = () => {
       <div className="border-b border-background/20">
         <div className="container py-16">
           <div className="max-w-xl mx-auto text-center">
-            <h3 className="font-display text-4xl md:text-5xl mb-4">JOIN THE VYBE</h3>
+            <h3 className="font-display text-4xl md:text-5xl mb-4">JOIN THE MOVEMENT</h3>
             <p className="text-background/60 mb-8 text-sm">
               Subscribe for exclusive drops, early access & 10% off your first order
             </p>
@@ -51,11 +51,11 @@ export const Footer = () => {
       <div className="container py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="font-display text-4xl tracking-wider">
-              VYBE
+            <Link to="/" className="font-display text-3xl tracking-wider">
+              OPPOZITE
             </Link>
             <p className="mt-4 text-sm text-background/60 max-w-xs">
-              Bold streetwear for the next generation. Express yourself. Be authentic.
+              Premium streetwear for those who dare to be different. Stand out. Be authentic.
             </p>
             <div className="flex gap-4 mt-6">
               <a href="#" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
@@ -111,7 +111,7 @@ export const Footer = () => {
       {/* Bottom */}
       <div className="border-t border-background/20">
         <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/40">
-          <p>© 2024 VYBE. All rights reserved.</p>
+          <p>© 2024 Oppozite Wears. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-background transition-colors">Privacy</Link>
             <Link to="/terms" className="hover:text-background transition-colors">Terms</Link>
