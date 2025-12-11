@@ -48,12 +48,12 @@ export const Header = () => {
               ))}
             </nav>
 
-            {/* Logo */}
+          {/* Logo */}
             <Link 
               to="/" 
-              className="absolute left-1/2 -translate-x-1/2 font-display text-3xl md:text-4xl tracking-wider"
+              className="absolute left-1/2 -translate-x-1/2 font-display text-xl md:text-2xl tracking-wider whitespace-nowrap"
             >
-              VYBE
+              OPPOZITE
             </Link>
 
             {/* Right Actions */}
