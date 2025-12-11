@@ -28,26 +28,26 @@ const AboutPage = () => {
             className="space-y-8"
           >
             <p className="text-2xl md:text-3xl font-light leading-relaxed">
-              VYBE was born from a simple belief: fashion should empower you to be 
+              Oppozite was born from a simple belief: fashion should empower you to be
               unapologetically yourself.
             </p>
-            
+
             <div className="grid md:grid-cols-2 gap-8 pt-8">
               <div>
                 <h3 className="font-display text-3xl mb-4">THE VISION</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  We create for the bold, the expressive, the ones who don't wait 
-                  for trends—they make them. Our designs blend streetwear edge with 
-                  contemporary sophistication, crafted for those who see fashion as 
+                  We create for the bold, the expressive, the ones who don't wait
+                  for trends—they make them. Our designs blend streetwear edge with
+                  contemporary sophistication, crafted for those who see fashion as
                   a form of self-expression.
                 </p>
               </div>
               <div>
                 <h3 className="font-display text-3xl mb-4">THE MISSION</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Quality without compromise. Every piece is designed in-house and 
-                  crafted with intention. We believe in slow fashion—pieces made to 
-                  last, styles that transcend seasons, and a wardrobe that evolves 
+                  Quality without compromise. Every piece is designed in-house and
+                  crafted with intention. We believe in slow fashion—pieces made to
+                  last, styles that transcend seasons, and a wardrobe that evolves
                   with you.
                 </p>
               </div>

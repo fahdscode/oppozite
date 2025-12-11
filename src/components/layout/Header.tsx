@@ -39,26 +39,25 @@ export const Header = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`nav-link text-xs tracking-widest uppercase ${
-                    location.pathname === link.path ? "text-foreground" : ""
-                  }`}
+                  className={`nav-link text-xs tracking-widest uppercase ${location.pathname === link.path ? "text-foreground" : ""
+                    }`}
                 >
                   {link.name}
                 </Link>
               ))}
             </nav>
 
-          {/* Logo */}
-            <Link 
-              to="/" 
-              className="absolute left-1/2 -translate-x-1/2 font-display text-xl md:text-2xl tracking-wider whitespace-nowrap"
+            {/* Logo */}
+            <Link
+              to="/"
+              className="absolute left-1/2 -translate-x-1/2"
             >
-              OPPOZITE
+              <img src="/logo.png" alt="Oppozite Wears" className="h-8 md:h-10 w-auto" />
             </Link>
 
             {/* Right Actions */}
             <div className="flex items-center gap-2 md:gap-4">
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 btn-ghost flex items-center justify-center"
               >
@@ -67,12 +66,12 @@ export const Header = () => {
               <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
                 <User className="w-5 h-5" />
               </button>
-              <button 
+              <button
                 onClick={openCart}
                 className="p-2 btn-ghost flex items-center justify-center relative"
               >
                 <ShoppingBag className="w-5 h-5" />
-              <motion.span
+                <motion.span
                   key={itemCount}
                   initial={{ scale: 0.5 }}
                   animate={{ scale: 1 }}

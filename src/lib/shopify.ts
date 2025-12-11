@@ -1,10 +1,11 @@
 import { toast } from "sonner";
 
 // Shopify API Configuration
-const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'oppozite-wears.myshopify.com';
+// Shopify API Configuration
+const SHOPIFY_API_VERSION = import.meta.env.VITE_SHOPIFY_API_VERSION || '2025-07';
+const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || 'oppozite-wears.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = 'a2c61bbf9fd1560bb6986648f7a43179';
+const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
 
 // Shopify Product Types
 export interface ShopifyProduct {
@@ -102,6 +103,81 @@ const STOREFRONT_PRODUCTS_QUERY = `
   }
 `;
 
+const STOREFRONT_COLLECTIONS_QUERY = `
+  query GetCollections($first: Int!) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          title
+          description
+          handle
+          image {
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+  }
+`;
+
+const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
+  query GetCollectionProducts($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      id
+      title
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 5) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {
@@ -147,6 +223,21 @@ const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
     }
   }
 `;
+
+export interface ShopifyCollection {
+  node: {
+    id: string;
+    title: string;
+    description: string;
+    handle: string;
+    image: {
+      url: string;
+      altText: string | null;
+      width: number;
+      height: number;
+    } | null;
+  };
+}
 
 const CART_CREATE_MUTATION = `
   mutation cartCreate($input: CartInput!) {
@@ -218,7 +309,7 @@ export async function storefrontApiRequest<T>(query: string, variables: Record<s
   }
 
   const data = await response.json();
-  
+
   if (data.errors) {
     throw new Error(`Error calling Shopify: ${data.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
@@ -235,7 +326,7 @@ export async function fetchShopifyProducts(first: number = 20, query?: string): 
       };
     };
   }>(STOREFRONT_PRODUCTS_QUERY, { first, query });
-  
+
   return data.data.products.edges;
 }
 
@@ -246,8 +337,42 @@ export async function fetchShopifyProductByHandle(handle: string): Promise<Shopi
       productByHandle: ShopifyProduct['node'] | null;
     };
   }>(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle });
-  
+
   return data.data.productByHandle;
+}
+
+// Fetch all collections
+export async function fetchShopifyCollections(first: number = 20): Promise<ShopifyCollection[]> {
+  const data = await storefrontApiRequest<{
+    data: {
+      collections: {
+        edges: ShopifyCollection[];
+      };
+    };
+  }>(STOREFRONT_COLLECTIONS_QUERY, { first });
+
+  return data.data.collections.edges;
+}
+
+// Fetch products by collection handle
+export async function fetchShopifyCollectionProducts(handle: string, first: number = 20): Promise<{ title: string; products: ShopifyProduct[] } | null> {
+  const data = await storefrontApiRequest<{
+    data: {
+      collection: {
+        title: string;
+        products: {
+          edges: ShopifyProduct[];
+        };
+      } | null;
+    };
+  }>(STOREFRONT_COLLECTION_PRODUCTS_QUERY, { handle, first });
+
+  if (!data.data.collection) return null;
+
+  return {
+    title: data.data.collection.title,
+    products: data.data.collection.products.edges,
+  };
 }
 
 // Cart Item type for checkout
@@ -292,7 +417,7 @@ export async function createStorefrontCheckout(items: ShopifyCartItem[]): Promis
   }
 
   const cart = cartData.data.cartCreate.cart;
-  
+
   if (!cart.checkoutUrl) {
     throw new Error('No checkout URL returned from Shopify');
   }

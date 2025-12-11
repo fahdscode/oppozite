@@ -6,29 +6,33 @@ import { Layout } from "@/components/layout/Layout";
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
 import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
 import { ShopifyProduct } from "@/lib/shopify";
-import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-
-const collectionTitles: Record<string, string> = {
-  "urban-edge": "URBAN EDGE",
-  "minimalist": "MINIMALIST",
-  "street-luxe": "STREET LUXE",
-};
-
-const collectionQueries: Record<string, string> = {
-  "urban-edge": "tag:urban-edge OR tag:urban",
-  "minimalist": "tag:minimalist OR tag:minimal",
-  "street-luxe": "tag:street-luxe OR tag:streetwear",
-};
+import { useShopifyProducts, useShopifyCollectionProducts } from "@/hooks/useShopifyProducts";
 
 const ShopPage = () => {
   const [searchParams] = useSearchParams();
-  const collection = searchParams.get("collection");
+  const collectionHandle = searchParams.get("collection");
   const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
-  
-  const searchQuery = collection ? collectionQueries[collection] : undefined;
-  const { data: products, isLoading, error } = useShopifyProducts(50, searchQuery);
-  
-  const pageTitle = collection ? collectionTitles[collection] || "SHOP" : "SHOP ALL";
+
+  // If collection handle exists, fetch specific collection products
+  const { data: collectionData, isLoading: isCollectionLoading, error: collectionError } =
+    useShopifyCollectionProducts(collectionHandle);
+
+  // Fallback to all products if no collection selected
+  const { data: allProducts, isLoading: isAllLoading, error: allError } =
+    useShopifyProducts(50, undefined);
+
+  const isLoading = collectionHandle ? isCollectionLoading : isAllLoading;
+  const error = collectionHandle ? collectionError : allError;
+
+  // Determine products to show
+  const products = collectionHandle
+    ? collectionData?.products
+    : allProducts;
+
+  // Determine page title
+  const pageTitle = collectionHandle
+    ? (collectionData?.title || collectionHandle.replace(/-/g, ' ').toUpperCase())
+    : "SHOP ALL";
 
   return (
     <Layout>
@@ -42,7 +46,7 @@ const ShopPage = () => {
           >
             {pageTitle}
           </motion.h1>
-          {collection && (
+          {collectionHandle && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
