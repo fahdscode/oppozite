@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Twitter } from "lucide-react";
+import { Instagram, Facebook } from "lucide-react";
 
 const footerLinks = {
   shop: [
@@ -58,11 +58,24 @@ export const Footer = () => {
               Premium streetwear for those who dare to be different. Stand out. Be authentic.
             </p>
             <div className="flex gap-4 mt-6">
-              <a href="#" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
+              <a href="https://www.instagram.com/oppozite.eg?igsh=aG40MDZhNTZobWdn&utm_source=qr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="https://www.facebook.com/share/1ZtnxAUmdd/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="https://www.tiktok.com/@oppozite.eg?_r=1&_t=ZS-928atypcjH0" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg>
               </a>
             </div>
           </div>

@@ -12,7 +12,7 @@ interface ShopifyProductCardProps {
 export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { node } = product;
-  
+
   const mainImage = node.images.edges[0]?.node;
   const hoverImage = node.images.edges[1]?.node;
   const price = node.priceRange.minVariantPrice;
@@ -22,8 +22,15 @@ export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyP
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -10 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.1,
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }}
       className="product-card group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -35,18 +42,16 @@ export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyP
             <img
               src={mainImage.url}
               alt={mainImage.altText || node.title}
-              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                isHovered && hoverImage ? "opacity-0" : "opacity-100"
-              }`}
+              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && hoverImage ? "opacity-0" : "opacity-100"
+                }`}
             />
-            
+
             {hoverImage && (
               <img
                 src={hoverImage.url}
                 alt={hoverImage.altText || node.title}
-                className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                  isHovered ? "opacity-100" : "opacity-0"
-                }`}
+                className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"
+                  }`}
               />
             )}
           </>

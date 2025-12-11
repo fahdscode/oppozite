@@ -118,6 +118,22 @@ const STOREFRONT_COLLECTIONS_QUERY = `
             width
             height
           }
+          products(first: 1) {
+            edges {
+              node {
+                images(first: 1) {
+                  edges {
+                    node {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -236,6 +252,22 @@ export interface ShopifyCollection {
       width: number;
       height: number;
     } | null;
+    products: {
+      edges: Array<{
+        node: {
+          images: {
+            edges: Array<{
+              node: {
+                url: string;
+                altText: string | null;
+                width?: number;
+                height?: number;
+              };
+            }>;
+          };
+        };
+      }>;
+    };
   };
 }
 

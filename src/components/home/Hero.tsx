@@ -1,12 +1,41 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 
 export const Hero = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 150 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const x = clientX / innerWidth - 0.5;
+      const y = clientY / innerHeight - 0.5;
+      mouseX.set(x * 50); // increased range
+      mouseY.set(y * 50);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
   return (
     <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-foreground text-background">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      <motion.div
+        style={{ x: useTransform(springX, (val) => val * -1), y: useTransform(springY, (val) => val * -1) }}
+        className="absolute inset-0 opacity-[0.03]"
+      >
         <div className="absolute inset-0" style={{
           backgroundImage: `repeating-linear-gradient(
             90deg,
@@ -23,9 +52,9 @@ export const Hero = () => {
             hsl(var(--background)) 101px
           )`
         }} />
-      </div>
+      </motion.div>
 
-      <div className="container relative z-10 py-32">
+      <motion.div style={{ y: y1 }} className="container relative z-10 py-32">
         <div className="max-w-5xl mx-auto text-center">
           {/* Overline */}
           <motion.p
@@ -38,16 +67,21 @@ export const Hero = () => {
           </motion.p>
 
           {/* Main Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display text-[12vw] md:text-[10vw] leading-[0.9] tracking-tight mb-8"
+          <motion.div
+            style={{ x: springX, y: springY }}
+            className="relative"
           >
-            OPPOZITE
-            <br />
-            <span className="italic text-[8vw] md:text-[6vw]">WEARS</span>
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="font-display text-[12vw] md:text-[10vw] leading-[0.9] tracking-tight mb-8"
+            >
+              OPPOZITE
+              <br />
+              <span className="italic text-[8vw] md:text-[6vw] text-background/80">WEAR THE VIBE</span>
+            </motion.h1>
+          </motion.div>
 
           {/* Subtitle */}
           <motion.p
@@ -56,7 +90,7 @@ export const Hero = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg md:text-xl text-background/70 max-w-xl mx-auto mb-12 font-light"
           >
-            Stand out from the crowd. Premium streetwear 
+            Stand out from the crowd. Premium streetwear
             designed for those who dare to be different.
           </motion.p>
 
@@ -74,18 +108,14 @@ export const Hero = () => {
               Shop Now
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              to="/new"
-              className="border border-background/50 text-background px-10 py-5 text-sm tracking-widest uppercase font-medium hover:bg-background hover:text-foreground transition-all"
-            >
-              New Arrivals
-            </Link>
+
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div
+        style={{ y: y2, opacity: useTransform(scrollY, [0, 200], [1, 0]) }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
