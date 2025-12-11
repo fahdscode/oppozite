@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -7,9 +8,27 @@ import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 
+const collectionTitles: Record<string, string> = {
+  "urban-edge": "URBAN EDGE",
+  "minimalist": "MINIMALIST",
+  "street-luxe": "STREET LUXE",
+};
+
+const collectionQueries: Record<string, string> = {
+  "urban-edge": "tag:urban-edge OR tag:urban",
+  "minimalist": "tag:minimalist OR tag:minimal",
+  "street-luxe": "tag:street-luxe OR tag:streetwear",
+};
+
 const ShopPage = () => {
+  const [searchParams] = useSearchParams();
+  const collection = searchParams.get("collection");
   const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
-  const { data: products, isLoading, error } = useShopifyProducts(50);
+  
+  const searchQuery = collection ? collectionQueries[collection] : undefined;
+  const { data: products, isLoading, error } = useShopifyProducts(50, searchQuery);
+  
+  const pageTitle = collection ? collectionTitles[collection] || "SHOP" : "SHOP ALL";
 
   return (
     <Layout>
@@ -21,8 +40,18 @@ const ShopPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-6xl md:text-8xl text-center"
           >
-            SHOP ALL
+            {pageTitle}
           </motion.h1>
+          {collection && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-center mt-4 text-background/60 tracking-widest text-sm uppercase"
+            >
+              Collection
+            </motion.p>
+          )}
         </div>
       </section>
 
