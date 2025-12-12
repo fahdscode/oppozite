@@ -3,7 +3,6 @@ import { Instagram, Facebook } from "lucide-react";
 
 const footerLinks = {
   shop: [
-    { name: "New Arrivals", path: "/new" },
     { name: "Best Sellers", path: "/best-sellers" },
     { name: "Sale", path: "/sale" },
     { name: "Gift Cards", path: "/gift-cards" },

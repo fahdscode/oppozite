@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/product/ProductCard";
-import { QuickViewModal } from "@/components/ui/QuickViewModal";
+
 import { Product } from "@/types/product";
 
 const NewArrivalsPage = () => {
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
   const newProducts = products.filter(p => p.isNew);
 
   return (
@@ -49,7 +49,6 @@ const NewArrivalsPage = () => {
               <ProductCard
                 key={product.id}
                 product={product}
-                onQuickView={setQuickViewProduct}
                 index={index}
               />
             ))}
@@ -63,11 +62,7 @@ const NewArrivalsPage = () => {
         </div>
       </section>
 
-      <QuickViewModal
-        product={quickViewProduct}
-        isOpen={!!quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-      />
+
     </Layout>
   );
 };

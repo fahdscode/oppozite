@@ -5,12 +5,12 @@ import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
 import { useState } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
-import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+
 
 const Sale = () => {
     // Query for items that are on sale
     const { data: products, isLoading, error } = useShopifyProducts(20, "tag:sale OR tag:clearance");
-    const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+
 
     return (
         <Layout>
@@ -50,7 +50,6 @@ const Sale = () => {
                                 <ShopifyProductCard
                                     key={product.node.id}
                                     product={product}
-                                    onQuickView={setQuickViewProduct}
                                     index={index}
                                 />
                             ))}
@@ -63,12 +62,6 @@ const Sale = () => {
                     )}
                 </div>
             </section>
-
-            <ShopifyQuickViewModal
-                product={quickViewProduct}
-                isOpen={!!quickViewProduct}
-                onClose={() => setQuickViewProduct(null)}
-            />
         </Layout>
     );
 };

@@ -8,6 +8,11 @@ const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${
 const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
 
 // Shopify Product Types
+export interface PageInfo {
+  hasNextPage: boolean;
+  endCursor: string;
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -54,8 +59,12 @@ export interface ShopifyProduct {
 
 // GraphQL Queries
 const STOREFRONT_PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
+  query GetProducts($first: Int!, $query: String, $after: String) {
+    products(first: $first, query: $query, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
@@ -141,11 +150,15 @@ const STOREFRONT_COLLECTIONS_QUERY = `
 `;
 
 const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
-  query GetCollectionProducts($handle: String!, $first: Int!) {
+  query GetCollectionProducts($handle: String!, $first: Int!, $after: String) {
     collection(handle: $handle) {
       id
       title
-      products(first: $first) {
+      products(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         edges {
           node {
             id
@@ -350,16 +363,20 @@ export async function storefrontApiRequest<T>(query: string, variables: Record<s
 }
 
 // Fetch all products
-export async function fetchShopifyProducts(first: number = 20, query?: string): Promise<ShopifyProduct[]> {
+export async function fetchShopifyProducts(first: number = 20, query?: string, after?: string): Promise<{ products: ShopifyProduct[], pageInfo: PageInfo }> {
   const data = await storefrontApiRequest<{
     data: {
       products: {
         edges: ShopifyProduct[];
+        pageInfo: PageInfo;
       };
     };
-  }>(STOREFRONT_PRODUCTS_QUERY, { first, query });
+  }>(STOREFRONT_PRODUCTS_QUERY, { first, query, after });
 
-  return data.data.products.edges;
+  return {
+    products: data.data.products.edges,
+    pageInfo: data.data.products.pageInfo,
+  };
 }
 
 // Fetch single product by handle
@@ -387,23 +404,25 @@ export async function fetchShopifyCollections(first: number = 20): Promise<Shopi
 }
 
 // Fetch products by collection handle
-export async function fetchShopifyCollectionProducts(handle: string, first: number = 20): Promise<{ title: string; products: ShopifyProduct[] } | null> {
+export async function fetchShopifyCollectionProducts(handle: string, first: number = 20, after?: string): Promise<{ title: string; products: ShopifyProduct[], pageInfo: PageInfo } | null> {
   const data = await storefrontApiRequest<{
     data: {
       collection: {
         title: string;
         products: {
           edges: ShopifyProduct[];
+          pageInfo: PageInfo;
         };
       } | null;
     };
-  }>(STOREFRONT_COLLECTION_PRODUCTS_QUERY, { handle, first });
+  }>(STOREFRONT_COLLECTION_PRODUCTS_QUERY, { handle, first, after });
 
   if (!data.data.collection) return null;
 
   return {
     title: data.data.collection.title,
     products: data.data.collection.products.edges,
+    pageInfo: data.data.collection.products.pageInfo,
   };
 }
 

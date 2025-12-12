@@ -77,7 +77,7 @@ export const Hero = () => {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="font-display text-[12vw] md:text-[10vw] leading-[0.9] tracking-tight mb-8"
             >
-              OPPOZITE
+              O<span className="inline-block scale-x-[-1]">PP</span>OZITE
               <br />
               <span className="italic text-[8vw] md:text-[6vw] text-background/80">WEAR THE VIBE</span>
             </motion.h1>

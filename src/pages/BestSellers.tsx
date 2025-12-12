@@ -5,13 +5,13 @@ import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
 import { useState } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
-import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+
 
 const BestSellers = () => {
     // Using a query that might target best sellers if tagged, otherwise showing all for now
     // Ideally this would filter by 'best-seller' tag or collection
     const { data: products, isLoading, error } = useShopifyProducts(20, "tag:best-seller OR tag:bestseller");
-    const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+
 
     return (
         <Layout>
@@ -51,7 +51,6 @@ const BestSellers = () => {
                                 <ShopifyProductCard
                                     key={product.node.id}
                                     product={product}
-                                    onQuickView={setQuickViewProduct}
                                     index={index}
                                 />
                             ))}
@@ -64,12 +63,6 @@ const BestSellers = () => {
                     )}
                 </div>
             </section>
-
-            <ShopifyQuickViewModal
-                product={quickViewProduct}
-                isOpen={!!quickViewProduct}
-                onClose={() => setQuickViewProduct(null)}
-            />
         </Layout>
     );
 };

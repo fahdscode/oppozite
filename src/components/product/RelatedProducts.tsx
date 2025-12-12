@@ -4,10 +4,9 @@ import { ProductCard } from "./ProductCard";
 
 interface RelatedProductsProps {
   products: Product[];
-  onQuickView: (product: Product) => void;
 }
 
-export const RelatedProducts = ({ products, onQuickView }: RelatedProductsProps) => {
+export const RelatedProducts = ({ products }: RelatedProductsProps) => {
   return (
     <section className="py-16 border-t border-border">
       <div className="container mx-auto px-4">
@@ -29,7 +28,7 @@ export const RelatedProducts = ({ products, onQuickView }: RelatedProductsProps)
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <ProductCard product={product} onQuickView={onQuickView} />
+              <ProductCard product={product} />
             </motion.div>
           ))}
         </div>

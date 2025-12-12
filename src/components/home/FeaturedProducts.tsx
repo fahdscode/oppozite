@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
-import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+
 import { ShopifyProduct } from "@/lib/shopify";
 import { useShopifyCollectionProducts } from "@/hooks/useShopifyProducts";
 import {
@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/carousel";
 
 export const FeaturedProducts = () => {
-  const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+
   // Fetch products from 'new-drops' collection
   const { data: collectionData, isLoading, error } = useShopifyCollectionProducts("new-drops", 8);
-  const products = collectionData?.products;
+  const products = collectionData?.pages.flatMap(page => page?.products || []) || [];
 
   return (
     <section className="py-24 md:py-32">
@@ -74,7 +74,6 @@ export const FeaturedProducts = () => {
                 <CarouselItem key={product.node.id} className="pl-4 basis-1/2 md:basis-1/4">
                   <ShopifyProductCard
                     product={product}
-                    onQuickView={setQuickViewProduct}
                     index={index}
                   />
                 </CarouselItem>
@@ -95,11 +94,7 @@ export const FeaturedProducts = () => {
         )}
       </div>
 
-      <ShopifyQuickViewModal
-        product={quickViewProduct}
-        isOpen={!!quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-      />
+
     </section>
   );
 };

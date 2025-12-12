@@ -1,10 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchShopifyProducts, fetchShopifyProductByHandle, fetchShopifyCollectionProducts, ShopifyProduct } from '@/lib/shopify';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { fetchShopifyProducts, fetchShopifyProductByHandle, fetchShopifyCollectionProducts } from '@/lib/shopify';
 
 export function useShopifyProducts(first: number = 20, query?: string) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['shopify-products', first, query],
-    queryFn: () => fetchShopifyProducts(first, query),
+    queryFn: ({ pageParam }) => fetchShopifyProducts(first, query, pageParam as string),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
@@ -19,10 +21,12 @@ export function useShopifyProduct(handle: string) {
 }
 
 export function useShopifyCollectionProducts(handle: string | null, first: number = 20) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['shopify-collection-products', handle, first],
-    queryFn: () => handle ? fetchShopifyCollectionProducts(handle, first) : null,
+    queryFn: ({ pageParam }) => handle ? fetchShopifyCollectionProducts(handle, first, pageParam as string) : null,
+    initialPageParam: undefined,
     enabled: !!handle,
+    getNextPageParam: (lastPage) => lastPage && lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
     staleTime: 1000 * 60 * 5,
   });
 }

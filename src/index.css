@@ -122,7 +122,7 @@
   }
 
   .product-card-overlay {
-    @apply absolute inset-0 bg-foreground/0 transition-all duration-300;
+    @apply absolute inset-0 bg-foreground/0 transition-all duration-300 pointer-events-none;
   }
 
   .product-card:hover .product-card-overlay {
@@ -144,16 +144,7 @@
            transition-colors duration-300 hover:bg-foreground/5;
   }
 
-  .quick-view-btn {
-    @apply absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 translate-y-4
-           transition-all duration-300 bg-background text-foreground
-           px-6 py-3 text-xs tracking-widest uppercase font-medium
-           border border-foreground hover:bg-foreground hover:text-background;
-  }
 
-  .product-card:hover .quick-view-btn {
-    @apply opacity-100 translate-y-0;
-  }
 
   .text-display {
     font-family: var(--font-display);

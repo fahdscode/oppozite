@@ -5,11 +5,10 @@ import { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
-  onQuickView: (product: Product) => void;
   index?: number;
 }
 
-export const ProductCard = ({ product, onQuickView, index = 0 }: ProductCardProps) => {
+export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -24,25 +23,25 @@ export const ProductCard = ({ product, onQuickView, index = 0 }: ProductCardProp
     >
       {/* Image Container */}
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
-        {/* Main Image */}
-        <img
-          src={product.image}
-          alt={product.name}
-          className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-            isHovered && product.hoverImage ? "opacity-0" : "opacity-100"
-          }`}
-        />
-        
-        {/* Hover Image */}
-        {product.hoverImage && (
+        <Link to={`/product/${product.id}`} className="block absolute inset-0">
+          {/* Main Image */}
           <img
-            src={product.hoverImage}
+            src={product.image}
             alt={product.name}
-            className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`}
+            className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && product.hoverImage ? "opacity-0" : "opacity-100"
+              }`}
           />
-        )}
+
+          {/* Hover Image */}
+          {product.hoverImage && (
+            <img
+              src={product.hoverImage}
+              alt={product.name}
+              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"
+                }`}
+            />
+          )}
+        </Link>
 
         {/* Overlay */}
         <div className="product-card-overlay" />
@@ -65,14 +64,6 @@ export const ProductCard = ({ product, onQuickView, index = 0 }: ProductCardProp
             </span>
           )}
         </div>
-
-        {/* Quick View Button */}
-        <button
-          onClick={() => onQuickView(product)}
-          className="quick-view-btn"
-        >
-          Quick View
-        </button>
       </div>
 
       {/* Details */}

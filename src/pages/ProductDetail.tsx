@@ -8,8 +8,9 @@ import { formatShopifyPrice, ShopifyProduct } from "@/lib/shopify";
 import { ImageGallery } from "@/components/product/ImageGallery";
 import { SizeGuideModal } from "@/components/product/SizeGuideModal";
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
-import { ShopifyQuickViewModal } from "@/components/ui/ShopifyQuickViewModal";
+
 import { Layout } from "@/components/layout/Layout";
+import { SEO } from "@/components/ui/SEO";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
@@ -18,7 +19,7 @@ const ProductDetail = () => {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<ShopifyProduct | null>(null);
+
 
   const { data: product, isLoading, error } = useShopifyProduct(handle || '');
   const { data: allProducts } = useShopifyProducts(8);
@@ -60,9 +61,10 @@ const ProductDetail = () => {
   }
 
   const productImages = product.images.edges.map(img => img.node.url);
-  
+
   // Get related products (excluding current product)
-  const relatedProducts = allProducts?.filter(p => p.node.id !== product.id).slice(0, 4) || [];
+  const flattenedProducts = allProducts?.pages.flatMap(page => page.products) || [];
+  const relatedProducts = flattenedProducts.filter(p => p.node.id !== product.id).slice(0, 4);
 
   const getSelectedVariant = () => {
     return product.variants.edges.find(variant => {
@@ -77,7 +79,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!selectedVariant) return;
-    
+
     addItem({
       product: { node: product },
       variantId: selectedVariant.id,
@@ -86,7 +88,7 @@ const ProductDetail = () => {
       quantity,
       selectedOptions: selectedVariant.selectedOptions,
     });
-    
+
     toast.success("Added to bag", {
       description: `${product.title} has been added to your bag.`,
     });
@@ -94,6 +96,12 @@ const ProductDetail = () => {
 
   return (
     <Layout>
+      <SEO
+        title={`${product.title} | Oppozite Wears`}
+        description={product.description}
+        image={product.images.edges[0]?.node.url}
+        type="product"
+      />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -178,11 +186,10 @@ const ProductDetail = () => {
                       <motion.button
                         key={value}
                         onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
-                        className={`min-w-[48px] h-12 px-4 border-2 font-medium transition-all ${
-                          selectedOptions[option.name] === value
-                            ? "border-foreground bg-foreground text-background"
-                            : "border-border hover:border-foreground"
-                        }`}
+                        className={`min-w-[48px] h-12 px-4 border-2 font-medium transition-all ${selectedOptions[option.name] === value
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border hover:border-foreground"
+                          }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -223,11 +230,10 @@ const ProductDetail = () => {
               <motion.button
                 onClick={handleAddToCart}
                 disabled={!isAvailable || !selectedVariant}
-                className={`w-full py-4 font-medium uppercase tracking-wider transition-all ${
-                  !isAvailable
-                    ? "bg-muted text-muted-foreground cursor-not-allowed"
-                    : "bg-foreground text-background hover:bg-foreground/90"
-                }`}
+                className={`w-full py-4 font-medium uppercase tracking-wider transition-all ${!isAvailable
+                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                  : "bg-foreground text-background hover:bg-foreground/90"
+                  }`}
                 whileHover={isAvailable ? { scale: 1.02 } : {}}
                 whileTap={isAvailable ? { scale: 0.98 } : {}}
               >
@@ -261,7 +267,6 @@ const ProductDetail = () => {
                   <ShopifyProductCard
                     key={product.node.id}
                     product={product}
-                    onQuickView={setQuickViewProduct}
                     index={index}
                   />
                 ))}
@@ -277,12 +282,7 @@ const ProductDetail = () => {
           category="General"
         />
 
-        {/* Quick View Modal for Related Products */}
-        <ShopifyQuickViewModal
-          product={quickViewProduct}
-          isOpen={!!quickViewProduct}
-          onClose={() => setQuickViewProduct(null)}
-        />
+
       </motion.div>
     </Layout>
   );

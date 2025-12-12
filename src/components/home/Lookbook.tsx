@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { motion, useScroll, useTransform, useMotionValue, animate } from "framer-motion";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useShopifyCollections } from "@/hooks/useShopifyCollections";
 
@@ -14,7 +14,27 @@ export const Lookbook = () => {
         offset: ["start end", "end start"],
     });
 
-    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
+    const parallaxX = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
+    const x = useMotionValue(0);
+
+    const handleSlide = (direction: 'left' | 'right') => {
+        const currentX = x.get();
+        // Assuming roughly -2000 is the limit based on dragConstraints
+        // Each slide moves 400px
+        const slideAmount = 400;
+
+        let newX = direction === 'left' ? currentX + slideAmount : currentX - slideAmount;
+
+        // Simple clamp
+        if (newX > 0) newX = 0;
+        if (newX < -2000) newX = -2000;
+
+        animate(x, newX, {
+            type: "spring",
+            stiffness: 300,
+            damping: 30
+        });
+    };
 
     if (isLoading) {
         return (
@@ -35,15 +55,25 @@ export const Lookbook = () => {
                     </span>
                     <h2 className="font-display text-5xl md:text-7xl">LOOKBOOK</h2>
                 </div>
-                <div className="hidden md:block">
-                    <span className="text-xs tracking-widest uppercase text-muted-foreground">
-                        Drag to Explore
-                    </span>
+                <div className="hidden md:flex items-center gap-4">
+                    <button
+                        onClick={() => handleSlide('left')}
+                        className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors duration-300"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                        onClick={() => handleSlide('right')}
+                        className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors duration-300"
+                    >
+                        <ArrowRight className="w-5 h-5" />
+                    </button>
                 </div>
             </div>
 
             <motion.div
                 className="cursor-grab active:cursor-grabbing pl-4 md:pl-[max(1rem,calc((100vw-1400px)/2))]"
+                style={{ x: parallaxX }}
             >
                 <motion.div
                     className="flex gap-4 md:gap-8 w-max"

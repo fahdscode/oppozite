@@ -5,11 +5,10 @@ import { ShopifyProduct, formatShopifyPrice } from "@/lib/shopify";
 
 interface ShopifyProductCardProps {
   product: ShopifyProduct;
-  onQuickView: (product: ShopifyProduct) => void;
   index?: number;
 }
 
-export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyProductCardProps) => {
+export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { node } = product;
 
@@ -38,7 +37,7 @@ export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyP
       {/* Image Container */}
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         {mainImage ? (
-          <>
+          <Link to={`/product/${node.handle}`} className="block absolute inset-0">
             <img
               src={mainImage.url}
               alt={mainImage.altText || node.title}
@@ -54,7 +53,7 @@ export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyP
                   }`}
               />
             )}
-          </>
+          </Link>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
             No Image
@@ -74,12 +73,7 @@ export const ShopifyProductCard = ({ product, onQuickView, index = 0 }: ShopifyP
         </div>
 
         {/* Quick View Button */}
-        <button
-          onClick={() => onQuickView(product)}
-          className="quick-view-btn"
-        >
-          Quick View
-        </button>
+
       </div>
 
       {/* Details */}

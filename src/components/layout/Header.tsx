@@ -7,7 +7,6 @@ import { SearchOverlay } from "@/components/search/SearchOverlay";
 
 const navLinks = [
   { name: "Shop All", path: "/shop" },
-  { name: "New Arrivals", path: "/new" },
   { name: "Collections", path: "/collections" },
   { name: "About", path: "/about" },
 ];
