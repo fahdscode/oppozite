@@ -60,10 +60,12 @@ const AnimatedRoutes = () => {
 };
 
 import ScrollToTop from "./components/ScrollToTop";
+import { MagneticCursor } from "./components/ui/MagneticCursor";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <MagneticCursor />
       <Toaster />
       <Sonner />
       <BrowserRouter>
