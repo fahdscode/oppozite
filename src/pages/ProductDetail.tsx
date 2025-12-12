@@ -132,7 +132,11 @@ const ProductDetail = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <ImageGallery images={productImages} productName={product.title} />
+              <ImageGallery
+                images={productImages}
+                productName={product.title}
+                layoutId={`product-image-${handle}`}
+              />
             </motion.div>
 
             {/* Product Info */}

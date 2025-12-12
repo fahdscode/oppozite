@@ -25,7 +25,8 @@ export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         <Link to={`/product/${product.id}`} className="block absolute inset-0">
           {/* Main Image */}
-          <img
+          <motion.img
+            layoutId={`product-image-${product.id}`}
             src={product.image}
             alt={product.name}
             className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && product.hoverImage ? "opacity-0" : "opacity-100"

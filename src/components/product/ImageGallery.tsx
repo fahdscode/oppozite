@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ImageGalleryProps {
   images: string[];
   productName: string;
+  layoutId?: string;
 }
 
-export const ImageGallery = ({ images, productName }: ImageGalleryProps) => {
+export const ImageGallery = ({ images, productName, layoutId }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    }
+  }, []);
 
   const handleNext = () => {
     setDirection(1);
@@ -36,6 +44,8 @@ export const ImageGallery = ({ images, productName }: ImageGalleryProps) => {
     }),
   };
 
+  const isSharedTransition = isFirstRender.current && selectedIndex === 0 && layoutId;
+
   return (
     <div className="flex flex-col-reverse lg:flex-row gap-4">
       {/* Thumbnails */}
@@ -47,11 +57,10 @@ export const ImageGallery = ({ images, productName }: ImageGalleryProps) => {
               setDirection(index > selectedIndex ? 1 : -1);
               setSelectedIndex(index);
             }}
-            className={`flex-shrink-0 w-16 h-20 lg:w-20 lg:h-24 border-2 transition-all duration-300 ${
-              selectedIndex === index
-                ? "border-foreground"
-                : "border-transparent opacity-60 hover:opacity-100"
-            }`}
+            className={`flex-shrink-0 w-16 h-20 lg:w-20 lg:h-24 border-2 transition-all duration-300 ${selectedIndex === index
+              ? "border-foreground"
+              : "border-transparent opacity-60 hover:opacity-100"
+              }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -66,15 +75,16 @@ export const ImageGallery = ({ images, productName }: ImageGalleryProps) => {
 
       {/* Main Image */}
       <div className="relative flex-1 aspect-[3/4] bg-secondary overflow-hidden">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+        <AnimatePresence initial={!isSharedTransition} custom={direction} mode="wait">
           <motion.img
             key={selectedIndex}
+            layoutId={selectedIndex === 0 && layoutId ? layoutId : undefined}
             src={images[selectedIndex]}
             alt={productName}
             className="absolute inset-0 w-full h-full object-cover"
             custom={direction}
             variants={slideVariants}
-            initial="enter"
+            initial={isSharedTransition ? { opacity: 1, x: 0 } : "enter"}
             animate="center"
             exit="exit"
             transition={{

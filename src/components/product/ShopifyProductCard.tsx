@@ -38,7 +38,8 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         {mainImage ? (
           <Link to={`/product/${node.handle}`} className="block absolute inset-0">
-            <img
+            <motion.img
+              layoutId={`product-image-${node.handle}`}
               src={mainImage.url}
               alt={mainImage.altText || node.title}
               className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && hoverImage ? "opacity-0" : "opacity-100"
