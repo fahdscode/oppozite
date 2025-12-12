@@ -52,11 +52,17 @@ const ShopPage = () => {
     ? (collectionData?.pages[0]?.title || collectionHandle.replace(/-/g, ' ').toUpperCase())
     : "SHOP ALL";
 
+  // Determine page image
+  const pageImage = collectionHandle
+    ? collectionData?.pages[0]?.image?.url
+    : undefined;
+
   return (
     <Layout>
       <SEO
         title={`${pageTitle} | Oppozite Wears`}
         description={collectionHandle ? `Shop the ${pageTitle} collection at Oppozite Wears.` : "Browse our full collection of premium streetwear."}
+        image={pageImage}
       />
       {/* Hero */}
       <section className="py-16 md:py-24 bg-foreground text-background">

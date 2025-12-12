@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useShopifyCollections } from "@/hooks/useShopifyCollections";
 
+import { SEO } from "@/components/ui/SEO";
+
 const CollectionsPage = () => {
   const { data: collections, isLoading, error } = useShopifyCollections();
 
@@ -28,6 +30,10 @@ const CollectionsPage = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Collections | Oppozite Wears"
+        description="Explore our latest streetwear collections. Find your unique style with Oppozite Wears."
+      />
       {/* Hero */}
       <section className="py-16 md:py-24 bg-foreground text-background">
         <div className="container text-center">

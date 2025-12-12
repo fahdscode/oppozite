@@ -154,6 +154,10 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
     collection(handle: $handle) {
       id
       title
+      image {
+        url
+        altText
+      }
       products(first: $first, after: $after) {
         pageInfo {
           hasNextPage
@@ -404,11 +408,15 @@ export async function fetchShopifyCollections(first: number = 20): Promise<Shopi
 }
 
 // Fetch products by collection handle
-export async function fetchShopifyCollectionProducts(handle: string, first: number = 20, after?: string): Promise<{ title: string; products: ShopifyProduct[], pageInfo: PageInfo } | null> {
+export async function fetchShopifyCollectionProducts(handle: string, first: number = 20, after?: string): Promise<{ title: string; image: { url: string; altText: string | null } | null; products: ShopifyProduct[], pageInfo: PageInfo } | null> {
   const data = await storefrontApiRequest<{
     data: {
       collection: {
         title: string;
+        image: {
+          url: string;
+          altText: string | null;
+        } | null;
         products: {
           edges: ShopifyProduct[];
           pageInfo: PageInfo;
@@ -421,6 +429,7 @@ export async function fetchShopifyCollectionProducts(handle: string, first: numb
 
   return {
     title: data.data.collection.title,
+    image: data.data.collection.image,
     products: data.data.collection.products.edges,
     pageInfo: data.data.collection.products.pageInfo,
   };
