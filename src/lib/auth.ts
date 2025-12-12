@@ -3,7 +3,7 @@ const CLIENT_ID = import.meta.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID || '8ef5e22
 
 export const login = () => {
     const redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin; // Ensure this is whitelisted in Shopify Admin
-    const scope = 'openid email https://api.customers.com/auth/customer.graphql';
+    const scope = 'openid email';
     const state = Math.random().toString(36).substring(7); // Simple state for now
 
     // Construct the authorization URL
