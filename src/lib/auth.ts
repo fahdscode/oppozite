@@ -26,3 +26,8 @@ export const getCustomer = () => {
     // Function to handle token exchange if we were processing the callback
     return null;
 };
+
+export const openAccount = () => {
+    const accountUrl = `https://shopify.com/${SHOP_ID}/account`;
+    window.location.href = accountUrl;
+};

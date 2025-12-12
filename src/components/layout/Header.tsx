@@ -11,7 +11,13 @@ const navLinks = [
   { name: "About", path: "/about" },
 ];
 
-import { login } from "@/lib/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { login, logout, openAccount } from "@/lib/auth";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,12 +58,28 @@ export const Header = () => {
               >
                 <Search className="w-5 h-5" />
               </button>
-              <button
-                onClick={login}
-                className="p-2 btn-ghost hidden md:flex items-center justify-center"
-              >
-                <User className="w-5 h-5" />
-              </button>
+
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-2 btn-ghost flex items-center justify-center">
+                      <User className="w-5 h-5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={login}>
+                      Sign In
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={openAccount}>
+                      My Orders
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logout}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
               <button
                 onClick={openCart}
                 className="p-2 btn-ghost flex items-center justify-center relative"
@@ -120,15 +142,16 @@ export const Header = () => {
                   </motion.div>
                 ))}
               </nav>
-              <div className="p-8 border-t border-border">
-                <div className="flex gap-4">
-                  <button className="flex-1 btn-outline text-center">
-                    Sign In
-                  </button>
-                  <button className="flex-1 btn-primary text-center">
-                    Sign Up
-                  </button>
-                </div>
+              <div className="p-8 border-t border-border flex flex-col gap-3">
+                <button onClick={login} className="w-full btn-primary text-center">
+                  Sign In
+                </button>
+                <button onClick={openAccount} className="w-full btn-outline text-center">
+                  My Orders
+                </button>
+                <button onClick={logout} className="w-full btn-ghost text-center text-red-500 hover:text-red-600 hover:bg-red-50">
+                  Logout
+                </button>
               </div>
             </motion.div>
           </>
