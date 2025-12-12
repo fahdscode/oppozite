@@ -328,6 +328,53 @@ const CART_CREATE_MUTATION = `
   }
 `;
 
+const CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION = `
+  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+    customerAccessTokenCreate(input: $input) {
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+const CUSTOMER_CREATE_MUTATION = `
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+        firstName
+        lastName
+        email
+        phone
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+const GET_CUSTOMER_QUERY = `
+  query getCustomer($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      id
+      firstName
+      lastName
+      email
+      phone
+    }
+  }
+`;
+
 // Storefront API helper function
 export async function storefrontApiRequest<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
@@ -476,6 +523,72 @@ export async function createStorefrontCheckout(items: ShopifyCartItem[]): Promis
   const url = new URL(cart.checkoutUrl);
   url.searchParams.set('channel', 'online_store');
   return url.toString();
+}
+
+// Customer Auth
+export async function customerAccessTokenCreate(email: string, password: string): Promise<{ accessToken: string, expiresAt: string }> {
+  const data = await storefrontApiRequest<{
+    data: {
+      customerAccessTokenCreate: {
+        customerAccessToken: {
+          accessToken: string;
+          expiresAt: string;
+        } | null;
+        customerUserErrors: Array<{ code: string; field: string; message: string }>;
+      };
+    };
+  }>(CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION, {
+    input: { email, password },
+  });
+
+  if (data.data.customerAccessTokenCreate.customerUserErrors.length > 0) {
+    throw new Error(data.data.customerAccessTokenCreate.customerUserErrors[0].message);
+  }
+
+  if (!data.data.customerAccessTokenCreate.customerAccessToken) {
+    throw new Error("Failed to create access token");
+  }
+
+  return data.data.customerAccessTokenCreate.customerAccessToken;
+}
+
+export async function customerCreate(firstName: string, lastName: string, email: string, password: string) {
+  const data = await storefrontApiRequest<{
+    data: {
+      customerCreate: {
+        customer: {
+          id: string;
+        } | null;
+        customerUserErrors: Array<{ code: string; field: string; message: string }>;
+      };
+    };
+  }>(CUSTOMER_CREATE_MUTATION, {
+    input: { firstName, lastName, email, password },
+  });
+
+  if (data.data.customerCreate.customerUserErrors.length > 0) {
+    throw new Error(data.data.customerCreate.customerUserErrors[0].message);
+  }
+
+  return data.data.customerCreate.customer;
+}
+
+export async function getCustomer(accessToken: string) {
+  const data = await storefrontApiRequest<{
+    data: {
+      customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+      } | null;
+    };
+  }>(GET_CUSTOMER_QUERY, {
+    customerAccessToken: accessToken,
+  });
+
+  return data.data.customer;
 }
 
 // Helper to format price

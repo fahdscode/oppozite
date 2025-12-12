@@ -62,9 +62,9 @@ export const Header = () => {
               >
                 <Search className="w-5 h-5" />
               </button>
-              <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
+              <Link to="/account" className="p-2 btn-ghost hidden md:flex items-center justify-center">
                 <User className="w-5 h-5" />
-              </button>
+              </Link>
               <button
                 onClick={openCart}
                 className="p-2 btn-ghost flex items-center justify-center relative"
@@ -129,12 +129,12 @@ export const Header = () => {
               </nav>
               <div className="p-8 border-t border-border">
                 <div className="flex gap-4">
-                  <button className="flex-1 btn-outline text-center">
+                  <Link to="/account" onClick={() => setIsMenuOpen(false)} className="flex-1 btn-outline text-center flex items-center justify-center">
                     Sign In
-                  </button>
-                  <button className="flex-1 btn-primary text-center">
+                  </Link>
+                  <Link to="/account" onClick={() => setIsMenuOpen(false)} className="flex-1 btn-primary text-center flex items-center justify-center">
                     Sign Up
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
