@@ -122,7 +122,7 @@ export const Footer = () => {
       {/* Bottom */}
       <div className="border-t border-background/20">
         <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/40">
-          <p>© 2026 Oppozite Wears. Powered by <a href="https://fahdscode.me">Fahd's Code</a></p>
+          <p>© 2026 <b style={{ color: "#fff" }}>Oppozite</b>. Made with ❤️ by <a href="https://fahdscode.me" style={{ color: "#fff" }}>Fahd's Code</a></p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-background transition-colors">Privacy</Link>
             <Link to="/terms" className="hover:text-background transition-colors">Terms</Link>
