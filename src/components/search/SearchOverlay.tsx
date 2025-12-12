@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Search } from "lucide-react";
-import { products } from "@/data/products";
-import { Product } from "@/types/product";
+import { X, Search, Loader2 } from "lucide-react";
+import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { useDebounce } from "@uidotdev/usehooks";
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -12,8 +12,18 @@ interface SearchOverlayProps {
 
 export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
   const [query, setQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const debouncedQuery = useDebounce(query, 300);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { data, isLoading } = useShopifyProducts(10, debouncedQuery, { enabled: !!debouncedQuery });
+
+  const products = data?.pages.flatMap((page) => page.products.map(p => ({
+    id: p.node.id,
+    handle: p.node.handle, // Added handle for proper linking
+    name: p.node.title,
+    image: p.node.images.edges[0]?.node.url || "",
+    price: p.node.variants.edges[0]?.node.price.amount || "0",
+  }))) || [];
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -21,24 +31,8 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (query.trim() === "") {
-      setFilteredProducts([]);
-      return;
-    }
-
-    const searchTerm = query.toLowerCase().trim();
-    const results = products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.category.toLowerCase().includes(searchTerm)
-    );
-    setFilteredProducts(results);
-  }, [query]);
-
   const handleClose = () => {
     setQuery("");
-    setFilteredProducts([]);
     onClose();
   };
 
@@ -94,7 +88,7 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
 
             {/* Search Results */}
             <AnimatePresence>
-              {(query.trim() !== "" || filteredProducts.length > 0) && (
+              {(debouncedQuery.trim() !== "" || products.length > 0) && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
@@ -102,13 +96,17 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                   className="border-t border-border overflow-hidden"
                 >
                   <div className="container mx-auto px-4 py-6 max-h-[60vh] overflow-y-auto">
-                    {filteredProducts.length > 0 ? (
+                    {isLoading && debouncedQuery.trim() !== "" ? (
+                      <div className="flex items-center justify-center py-12">
+                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : products.length > 0 ? (
                       <>
                         <p className="text-sm text-muted-foreground mb-4">
-                          {filteredProducts.length} result{filteredProducts.length !== 1 ? "s" : ""} for "{query}"
+                          {products.length} result{products.length !== 1 ? "s" : ""} for "{debouncedQuery}"
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {filteredProducts.map((product, index) => (
+                          {products.map((product, index) => (
                             <motion.div
                               key={product.id}
                               initial={{ opacity: 0, y: 20 }}
@@ -116,36 +114,41 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                               transition={{ delay: index * 0.05 }}
                             >
                               <Link
-                                to={`/product/${product.id}`}
+                                to={`/product/${product.handle}`}
                                 onClick={handleProductClick}
                                 className="group block"
                               >
                                 <div className="aspect-[3/4] bg-secondary overflow-hidden mb-3">
-                                  <motion.img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  />
+                                  {product.image ? (
+                                    <motion.img
+                                      src={product.image}
+                                      alt={product.name}
+                                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">No Image</div>
+                                  )}
+
                                 </div>
                                 <h3 className="text-sm font-medium group-hover:underline">
                                   {product.name}
                                 </h3>
                                 <p className="text-sm text-muted-foreground">
-                                  ${product.price}
+                                  ${parseFloat(product.price as string).toFixed(2)}
                                 </p>
                               </Link>
                             </motion.div>
                           ))}
                         </div>
                       </>
-                    ) : query.trim() !== "" ? (
+                    ) : debouncedQuery.trim() !== "" ? (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="text-center py-12"
                       >
                         <p className="text-lg text-muted-foreground mb-2">
-                          No results found for "{query}"
+                          No results found for "{debouncedQuery}"
                         </p>
                         <p className="text-sm text-muted-foreground">
                           Try searching for something else
@@ -158,7 +161,7 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
             </AnimatePresence>
 
             {/* Quick Links when empty */}
-            {query.trim() === "" && (
+            {query.trim() === "" && products.length === 0 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
