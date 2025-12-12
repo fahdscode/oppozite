@@ -2,7 +2,7 @@ const SHOP_ID = import.meta.env.SHOPIFY_SHOP_ID || '97366212901';
 const CLIENT_ID = import.meta.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID || '8ef5e229-9f7c-4cfc-8c1c-a2b1c6eec67a';
 
 export const login = () => {
-    const redirectUri = window.location.origin; // Ensure this is whitelisted in Shopify Admin
+    const redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin; // Ensure this is whitelisted in Shopify Admin
     const scope = 'openid email https://api.customers.com/auth/customer.graphql';
     const state = Math.random().toString(36).substring(7); // Simple state for now
 
