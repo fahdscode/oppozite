@@ -11,6 +11,8 @@ const navLinks = [
   { name: "About", path: "/about" },
 ];
 
+import { login } from "@/lib/auth";
+
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -50,7 +52,10 @@ export const Header = () => {
               >
                 <Search className="w-5 h-5" />
               </button>
-              <button className="p-2 btn-ghost hidden md:flex items-center justify-center">
+              <button
+                onClick={login}
+                className="p-2 btn-ghost hidden md:flex items-center justify-center"
+              >
                 <User className="w-5 h-5" />
               </button>
               <button
