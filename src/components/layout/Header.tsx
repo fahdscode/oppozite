@@ -26,25 +26,13 @@ export const Header = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="md:hidden p-2 -ml-2"
+              className="p-2 -ml-2"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`nav-link text-xs tracking-widest uppercase ${location.pathname === link.path ? "text-foreground" : ""
-                    }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
+
 
             {/* Logo */}
             <Link
