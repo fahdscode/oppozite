@@ -91,13 +91,13 @@ export default {
           "100%": { opacity: "1", filter: "blur(0)" },
         },
         "text-reveal": {
-          "0%": { 
+          "0%": {
             clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
-            opacity: "0" 
+            opacity: "0"
           },
-          "100%": { 
+          "100%": {
             clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            opacity: "1" 
+            opacity: "1"
           },
         },
       },
