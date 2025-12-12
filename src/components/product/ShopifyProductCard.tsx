@@ -15,7 +15,9 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
   const mainImage = node.images.edges[0]?.node;
   const hoverImage = node.images.edges[1]?.node;
   const price = node.priceRange.minVariantPrice;
+  const compareAtPrice = node.variants.edges[0]?.node.compareAtPrice;
   const isAvailable = node.variants.edges.some(v => v.node.availableForSale);
+  const isSale = compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
 
   return (
     <motion.div
@@ -71,6 +73,11 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
               Sold Out
             </span>
           )}
+          {isSale && isAvailable && (
+            <span className="bg-destructive text-destructive-foreground px-3 py-1 text-xs tracking-widest uppercase">
+              Sale
+            </span>
+          )}
         </div>
 
         {/* Quick View Button */}
@@ -84,6 +91,11 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-sm">{formatShopifyPrice(price.amount, price.currencyCode)}</span>
+          {isSale && compareAtPrice && (
+            <span className="text-sm text-muted-foreground line-through">
+              {formatShopifyPrice(compareAtPrice.amount, compareAtPrice.currencyCode)}
+            </span>
+          )}
         </div>
       </Link>
     </motion.div>

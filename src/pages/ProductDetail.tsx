@@ -76,6 +76,8 @@ const ProductDetail = () => {
 
   const selectedVariant = getSelectedVariant();
   const isAvailable = selectedVariant?.availableForSale ?? false;
+  const compareAtPrice = selectedVariant?.compareAtPrice;
+  const isSale = selectedVariant && compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(selectedVariant.price.amount);
 
   const handleAddToCart = () => {
     if (!selectedVariant) return;
@@ -153,6 +155,11 @@ const ProductDetail = () => {
                     Sold Out
                   </span>
                 )}
+                {isSale && isAvailable && (
+                  <span className="px-3 py-1 bg-destructive text-destructive-foreground text-xs font-medium uppercase tracking-wider">
+                    Sale
+                  </span>
+                )}
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-display uppercase tracking-wider mb-4">
@@ -161,9 +168,16 @@ const ProductDetail = () => {
 
               <div className="flex items-center gap-4 mb-8">
                 {selectedVariant && (
-                  <span className="text-2xl font-medium">
-                    {formatShopifyPrice(selectedVariant.price.amount, selectedVariant.price.currencyCode)}
-                  </span>
+                  <>
+                    <span className="text-2xl font-medium">
+                      {formatShopifyPrice(selectedVariant.price.amount, selectedVariant.price.currencyCode)}
+                    </span>
+                    {isSale && compareAtPrice && (
+                      <span className="text-xl text-muted-foreground line-through">
+                        {formatShopifyPrice(compareAtPrice.amount, compareAtPrice.currencyCode)}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
 

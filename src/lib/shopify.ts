@@ -3,6 +3,9 @@ import { toast } from "sonner";
 // Shopify API Configuration
 // Shopify API Configuration
 const SHOPIFY_API_VERSION = import.meta.env.SHOPIFY_API_VERSION || import.meta.env.VITE_SHOPIFY_API_VERSION || '2025-07';
+
+
+
 const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.SHOPIFY_STORE_DOMAIN || import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || 'oppozite-wears.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
@@ -43,6 +46,10 @@ export interface ShopifyProduct {
             currencyCode: string;
           };
           availableForSale: boolean;
+          compareAtPrice: {
+            amount: string;
+            currencyCode: string;
+          } | null;
           selectedOptions: Array<{
             name: string;
             value: string;
@@ -95,6 +102,10 @@ const STOREFRONT_PRODUCTS_QUERY = `
                   currencyCode
                 }
                 availableForSale
+                compareAtPrice {
+                  amount
+                  currencyCode
+                }
                 selectedOptions {
                   name
                   value
@@ -193,6 +204,10 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
                     currencyCode
                   }
                   availableForSale
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
                   selectedOptions {
                     name
                     value
@@ -242,6 +257,10 @@ const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
               currencyCode
             }
             availableForSale
+            compareAtPrice {
+              amount
+              currencyCode
+            }
             selectedOptions {
               name
               value
