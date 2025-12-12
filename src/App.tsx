@@ -12,7 +12,7 @@ import About from "./pages/About";
 import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 import BestSellers from "./pages/BestSellers";
-import Sale from "./pages/Sale";
+
 import GiftCards from "./pages/GiftCards";
 import FAQ from "./pages/FAQ";
 import Shipping from "./pages/Shipping";
@@ -41,7 +41,7 @@ const AnimatedRoutes = () => {
 
         {/* Footer Pages */}
         <Route path="/best-sellers" element={<BestSellers />} />
-        <Route path="/sale" element={<Sale />} />
+
         <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/shipping" element={<Shipping />} />
