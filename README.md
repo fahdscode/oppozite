@@ -1,73 +1,69 @@
-# Welcome to your Lovable project
+# Oppozite
 
-## Project info
+A modern, high-performance e-commerce storefront built with the latest web technologies. This project leverages React, Vite, and Tailwind CSS to deliver a seamless and visually stunning shopping experience.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## ✨ Features
 
-## How can I edit this code?
+- **Modern Tech Stack**: Built with React, TypeScript, and Vite for lightning-fast performance.
+- **Beautiful UI**: Styled with Tailwind CSS and shadcn/ui components for a premium look and feel.
+- **Smooth Animations**: Integrated with Framer Motion for dynamic and fluid user interactions.
+- **State Management**: specific state management via Zustand and TanStack Query.
+- **Shopify Integration**: Utilizes `@shopify/hydrogen-react` for robust e-commerce capabilities.
 
-There are several ways of editing your application.
+## 🛠️ Technologies Used
 
-**Use Lovable**
+- **Framework**: [React](https://reactjs.org/) & [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query/latest)
+- **State Management**: [Zustand](https://zustand-demo.pmnd.rs/)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+To get a local copy up and running, follow these simple steps.
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (v18 or higher recommended)
+- npm or yarn
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/your-username/oppozite.git
+    cd oppozite
+    ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2.  **Install dependencies**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3.  **Start the development server**
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+    Open [http://localhost:8080](http://localhost:8080) (or the port shown in your terminal) to view it in the browser.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 📜 Scripts
 
-**Edit a file directly in GitHub**
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the app for production.
+- `npm run lint`: Lints the codebase using ESLint.
+- `npm run preview`: Preview the production build locally.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## © Copyright
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+© 2025 Fahd's Code. All rights reserved.
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+[fahdscode.me](https://fahdscode.me)
