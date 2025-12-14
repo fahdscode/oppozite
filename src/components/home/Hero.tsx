@@ -91,16 +91,21 @@ export const Hero = () => {
             style={{ x: springX, y: springY }}
             className="relative"
           >
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-display text-[12vw] md:text-[10vw] leading-[0.9] tracking-tight mb-8"
+              className="flex flex-col items-center mb-8"
             >
-              O<span className="inline-block scale-x-[-1]">PP</span>OZITE
-              <br />
-              <span className="italic text-[8vw] md:text-[6vw] text-background/80">WEAR THE VIBE</span>
-            </motion.h1>
+              <img
+                src="/oppozite-logo.png"
+                alt="OPPOZITE"
+                className="w-[80vw] md:w-[20vw] max-w-2xl object-contain mb-4"
+              />
+              <span className="font-display italic text-[8vw] md:text-[6vw] text-background/80 leading-[0.9] tracking-tight">
+                WEAR THE VIBE
+              </span>
+            </motion.div>
           </motion.div>
 
           {/* Subtitle */}
