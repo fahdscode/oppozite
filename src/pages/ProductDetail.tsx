@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Minus, Plus, Ruler, Loader2 } from "lucide-react";
 import { useShopifyProduct, useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
@@ -138,6 +138,7 @@ const ProductDetail = () => {
                 images={productImages}
                 productName={product.title}
                 layoutId={`product-image-${handle}`}
+                selectedImage={selectedVariant?.image?.url}
               />
             </motion.div>
 
@@ -205,15 +206,37 @@ const ProductDetail = () => {
                         <motion.button
                           key={value}
                           onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
-                          className={`w-8 h-8 rounded-full border transition-all ${selectedOptions[option.name] === value
-                            ? "ring-2 ring-offset-2 ring-foreground border-transparent"
-                            : "border-border hover:border-foreground"
+                          className={`h-8 rounded-full border transition-all flex items-center justify-center gap-2 overflow-hidden ${selectedOptions[option.name] === value
+                            ? "pr-3 ring-2 ring-offset-2 ring-foreground border-transparent"
+                            : "w-8 border-border hover:border-foreground"
                             }`}
-                          style={{ backgroundColor: value.toLowerCase() }}
+                          style={{ backgroundColor: selectedOptions[option.name] === value ? 'transparent' : value.toLowerCase() }}
                           title={value}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        />
+                          layout
+                          animate={{
+                            width: selectedOptions[option.name] === value ? "auto" : 32,
+                            backgroundColor: selectedOptions[option.name] === value ? "transparent" : value.toLowerCase()
+                          }}
+                        >
+                          <motion.div
+                            className="w-8 h-8 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: value.toLowerCase() }}
+                            layout
+                          />
+                          <AnimatePresence>
+                            {selectedOptions[option.name] === value && (
+                              <motion.span
+                                key="text"
+                                initial={{ opacity: 0, width: 0 }}
+                                animate={{ opacity: 1, width: "auto" }}
+                                exit={{ opacity: 0, width: 0 }}
+                                className="text-xs font-medium uppercase whitespace-nowrap overflow-hidden"
+                              >
+                                {value}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </motion.button>
                       ) : (
                         <motion.button
                           key={value}

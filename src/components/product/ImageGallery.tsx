@@ -6,9 +6,10 @@ interface ImageGalleryProps {
   images: string[];
   productName: string;
   layoutId?: string;
+  selectedImage?: string | null;
 }
 
-export const ImageGallery = ({ images, productName, layoutId }: ImageGalleryProps) => {
+export const ImageGallery = ({ images, productName, layoutId, selectedImage }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const isFirstRender = useRef(true);
@@ -18,6 +19,17 @@ export const ImageGallery = ({ images, productName, layoutId }: ImageGalleryProp
       isFirstRender.current = false;
     }
   }, []);
+
+  // Update selected index when selectedImage prop changes
+  useEffect(() => {
+    if (selectedImage) {
+      const index = images.findIndex(img => img === selectedImage);
+      if (index !== -1 && index !== selectedIndex) {
+        setDirection(index > selectedIndex ? 1 : -1);
+        setSelectedIndex(index);
+      }
+    }
+  }, [selectedImage, images]);
 
   const handleNext = () => {
     setDirection(1);
