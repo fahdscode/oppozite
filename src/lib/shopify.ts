@@ -54,6 +54,10 @@ export interface ShopifyProduct {
             name: string;
             value: string;
           }>;
+          image: {
+            url: string;
+            altText: string | null;
+          } | null;
         };
       }>;
     };
@@ -109,6 +113,10 @@ const STOREFRONT_PRODUCTS_QUERY = `
                 selectedOptions {
                   name
                   value
+                }
+                image {
+                  url
+                  altText
                 }
               }
             }
@@ -212,6 +220,10 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
                     name
                     value
                   }
+                  image {
+                    url
+                    altText
+                  }
                 }
               }
             }
@@ -264,6 +276,10 @@ const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
             selectedOptions {
               name
               value
+            }
+            image {
+              url
+              altText
             }
           }
         }

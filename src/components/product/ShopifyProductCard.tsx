@@ -10,14 +10,31 @@ interface ShopifyProductCardProps {
 
 export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [selectedVariantImage, setSelectedVariantImage] = useState<string | null>(null);
   const { node } = product;
 
-  const mainImage = node.images.edges[0]?.node;
+  // Derive initial images
+  const mainImage = selectedVariantImage ? { url: selectedVariantImage, altText: node.title } : node.images.edges[0]?.node;
   const hoverImage = node.images.edges[1]?.node;
+
   const price = node.priceRange.minVariantPrice;
   const compareAtPrice = node.variants.edges[0]?.node.compareAtPrice;
   const isAvailable = node.variants.edges.some(v => v.node.availableForSale);
   const isSale = compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
+
+  const handleColorClick = (e: React.MouseEvent, color: string) => {
+    e.preventDefault(); // Prevent navigation
+    e.stopPropagation();
+
+    // Find variant with this color
+    const variant = node.variants.edges.find(edge =>
+      edge.node.selectedOptions.some(opt => opt.name === "Color" && opt.value === color)
+    );
+
+    if (variant?.node.image) {
+      setSelectedVariantImage(variant.node.image.url);
+    }
+  };
 
   return (
     <motion.div
@@ -42,13 +59,17 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
           <Link to={`/product/${node.handle}`} className="block absolute inset-0">
             <motion.img
               layoutId={`product-image-${node.handle}`}
+              key={mainImage.url} // Key change triggers animation
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               src={mainImage.url}
               alt={mainImage.altText || node.title}
-              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && hoverImage ? "opacity-0" : "opacity-100"
+              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && hoverImage && !selectedVariantImage ? "opacity-0" : "opacity-100"
                 }`}
             />
 
-            {hoverImage && (
+            {hoverImage && !selectedVariantImage && (
               <img
                 src={hoverImage.url}
                 alt={hoverImage.altText || node.title}
@@ -97,6 +118,26 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
             </span>
           )}
         </div>
+
+        {/* Color Pills */}
+        {node.options.find(opt => opt.name === "Color") && (
+          <div className="flex gap-2 mt-3">
+            {node.options.find(opt => opt.name === "Color")?.values.slice(0, 5).map((color, i) => (
+              <button
+                key={i}
+                onClick={(e) => handleColorClick(e, color)}
+                className="w-5 h-5 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
+                style={{ backgroundColor: color.toLowerCase() }}
+                title={color}
+              />
+            ))}
+            {(node.options.find(opt => opt.name === "Color")?.values.length || 0) > 5 && (
+              <span className="text-[10px] text-muted-foreground flex items-center">
+                +{(node.options.find(opt => opt.name === "Color")?.values.length || 0) - 5}
+              </span>
+            )}
+          </div>
+        )}
       </Link>
     </motion.div>
   );

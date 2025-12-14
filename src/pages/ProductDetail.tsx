@@ -201,18 +201,33 @@ const ProductDetail = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {option.values.map((value) => (
-                      <motion.button
-                        key={value}
-                        onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
-                        className={`min-w-[48px] h-12 px-4 border-2 font-medium transition-all ${selectedOptions[option.name] === value
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border hover:border-foreground"
-                          }`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        {value}
-                      </motion.button>
+                      option.name === "Color" ? (
+                        <motion.button
+                          key={value}
+                          onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
+                          className={`w-8 h-8 rounded-full border transition-all ${selectedOptions[option.name] === value
+                            ? "ring-2 ring-offset-2 ring-foreground border-transparent"
+                            : "border-border hover:border-foreground"
+                            }`}
+                          style={{ backgroundColor: value.toLowerCase() }}
+                          title={value}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        />
+                      ) : (
+                        <motion.button
+                          key={value}
+                          onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
+                          className={`min-w-[48px] h-12 px-4 border-2 font-medium transition-all ${selectedOptions[option.name] === value
+                            ? "border-foreground bg-foreground text-background"
+                            : "border-border hover:border-foreground"
+                            }`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {value}
+                        </motion.button>
+                      )
                     ))}
                   </div>
                 </div>
