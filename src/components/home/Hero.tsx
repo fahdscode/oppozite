@@ -61,7 +61,7 @@ export const Hero = () => {
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-0 left-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block"
+        className="absolute bottom-0 left-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block grayscale"
       />
 
       {/* Right Model */}
@@ -71,7 +71,7 @@ export const Hero = () => {
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-0 right-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block"
+        className="absolute bottom-0 right-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block grayscale"
       />
 
       <motion.div style={{ y: y1 }} className="container relative z-10 py-32">
