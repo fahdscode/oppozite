@@ -54,6 +54,26 @@ export const Hero = () => {
         }} />
       </motion.div>
 
+      {/* Left Model */}
+      <motion.img
+        src="/hero-model-left.png"
+        alt="Model"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="absolute bottom-0 left-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block"
+      />
+
+      {/* Right Model */}
+      <motion.img
+        src="/hero-model-right.png"
+        alt="Model"
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="absolute bottom-0 right-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block"
+      />
+
       <motion.div style={{ y: y1 }} className="container relative z-10 py-32">
         <div className="max-w-5xl mx-auto text-center">
           {/* Overline */}
@@ -119,7 +139,7 @@ export const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-0 right-0 mx-auto w-fit flex flex-col items-center gap-2"
       >
         <span className="text-xs tracking-widest uppercase text-background/40">Scroll</span>
         <motion.div
