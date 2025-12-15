@@ -3,12 +3,12 @@ import { getAccessToken, logout } from "./auth";
 const SHOP_ID = import.meta.env.SHOPIFY_SHOP_ID || '97366212901';
 
 export async function fetchCustomerOrders() {
-    const accessToken = getAccessToken();
-    if (!accessToken) {
-        throw new Error("No access token found");
-    }
+  const accessToken = getAccessToken();
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
 
-    const query = `
+  const query = `
     {
       customer {
         firstName
@@ -24,6 +24,7 @@ export async function fetchCustomerOrders() {
               amount
               currencyCode
             }
+            statusPageUrl
             lineItems(first: 5) {
               nodes {
                 title
@@ -41,28 +42,28 @@ export async function fetchCustomerOrders() {
     }
   `;
 
-    const response = await fetch(`https://shopify.com/${SHOP_ID}/account/customer/api/2025-01/graphql`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ query }),
-    });
+  const response = await fetch(`https://shopify.com/${SHOP_ID}/account/customer/api/2025-01/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ query }),
+  });
 
-    if (!response.ok) {
-        if (response.status === 401) {
-            logout(); // Token likely expired
-            throw new Error("Unauthorized");
-        }
-        const text = await response.text();
-        throw new Error(`Failed to fetch orders: ${text}`);
+  if (!response.ok) {
+    if (response.status === 401) {
+      logout(); // Token likely expired
+      throw new Error("Unauthorized");
     }
+    const text = await response.text();
+    throw new Error(`Failed to fetch orders: ${text}`);
+  }
 
-    const { data, errors } = await response.json();
-    if (errors) {
-        throw new Error(errors[0].message);
-    }
+  const { data, errors } = await response.json();
+  if (errors) {
+    throw new Error(errors[0].message);
+  }
 
-    return data.customer;
+  return data.customer;
 }

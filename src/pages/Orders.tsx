@@ -83,7 +83,15 @@ export default function Orders() {
                             <div key={order.id} className="border border-border rounded-lg p-6">
                                 <div className="flex flex-wrap justify-between items-start gap-4 mb-4 border-b border-border/50 pb-4">
                                     <div>
-                                        <h3 className="font-semibold text-lg">Order #{order.orderNumber}</h3>
+                                        <a
+                                            href={order.statusPageUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="font-semibold text-lg hover:underline flex items-center gap-2"
+                                        >
+                                            Order #{order.orderNumber}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                        </a>
                                         <p className="text-sm text-muted-foreground text-xs">{new Date(order.processedAt).toLocaleDateString()}</p>
                                     </div>
                                     <div className="text-right">
