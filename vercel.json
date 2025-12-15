@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/products/:handle",
+            "destination": "/api/seo"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
