@@ -11,7 +11,7 @@ interface SEOProps {
 export const SEO = ({
     title = "Oppozite Wears | Premium Streetwear",
     description = "Discover Oppozite Wears - Premium streetwear combining modern aesthetics with ultimate comfort. Shop the latest collection now.",
-    image = "/og-image.jpg", // Default OG image should be in public folder
+    image = "/og-image.png", // Default OG image should be in public folder
     url,
     type = "website"
 }: SEOProps) => {
