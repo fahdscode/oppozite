@@ -4,7 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Minus, Plus, Loader2 } from "lucide-react";
 import { useShopifyProduct, useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
-import { formatShopifyPrice, ShopifyProduct } from "@/lib/shopify";
+import { getColorValue } from "@/lib/colors";
+import { formatShopifyPrice } from "@/lib/shopify";
+
+// ...
+
+
 import { ImageGallery } from "@/components/product/ImageGallery";
 
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
@@ -26,10 +31,12 @@ const ProductDetail = () => {
 
   // Initialize selected options when product loads
   useEffect(() => {
-    if (product) {
+    if (product?.options) {
       const initialOptions: Record<string, string> = {};
       product.options.forEach(option => {
-        initialOptions[option.name] = option.values[0];
+        if (option?.values?.length > 0) {
+          initialOptions[option.name] = option.values[0];
+        }
       });
       setSelectedOptions(initialOptions);
     }
@@ -60,15 +67,15 @@ const ProductDetail = () => {
     );
   }
 
-  const productImages = product.images.edges.map(img => img.node.url);
+  const productImages = product.images?.edges?.map(img => img?.node?.url).filter((url): url is string => !!url) || [];
 
   // Get related products (excluding current product)
-  const flattenedProducts = allProducts?.pages.flatMap(page => page.products) || [];
-  const relatedProducts = flattenedProducts.filter(p => p.node.id !== product.id).slice(0, 4);
+  const flattenedProducts = allProducts?.pages?.flatMap(page => page?.products || []) || [];
+  const relatedProducts = flattenedProducts.filter(p => p?.node?.id && p.node.id !== product.id).slice(0, 4);
 
   const getSelectedVariant = () => {
-    return product.variants.edges.find(variant => {
-      return variant.node.selectedOptions.every(
+    return product.variants?.edges?.find(variant => {
+      return variant?.node?.selectedOptions?.every(
         opt => selectedOptions[opt.name] === opt.value
       );
     })?.node;
@@ -101,7 +108,7 @@ const ProductDetail = () => {
       <SEO
         title={`${product.title} | Oppozite Wears`}
         description={product.description}
-        image={product.images.edges[0]?.node.url}
+        image={product.images?.edges?.[0]?.node?.url}
         type="product"
       />
       <motion.div
@@ -183,7 +190,7 @@ const ProductDetail = () => {
               </div>
 
               {/* Options Selection */}
-              {product.options.map((option) => (
+              {product.options?.map((option) => (
                 <div key={option.name} className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-medium uppercase tracking-wider">
@@ -191,7 +198,7 @@ const ProductDetail = () => {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {option.values.map((value) => (
+                    {option.values?.map((value) => (
                       option.name === "Color" ? (
                         <motion.button
                           key={value}
@@ -200,17 +207,51 @@ const ProductDetail = () => {
                             ? "pr-3 ring-2 ring-offset-2 ring-foreground border-transparent"
                             : "w-8 border-border hover:border-foreground"
                             }`}
-                          style={{ backgroundColor: selectedOptions[option.name] === value ? 'transparent' : value.toLowerCase() }}
+                          style={{
+                            backgroundColor: (() => {
+                              try {
+                                if (selectedOptions[option.name] === value) return 'transparent';
+                                const variant = product.variants?.edges?.find(v =>
+                                  v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
+                                );
+                                return getColorValue(value, variant?.node?.colorCode?.value);
+                              } catch (e) {
+                                return getColorValue(value);
+                              }
+                            })()
+                          }}
                           title={value}
                           layout
                           animate={{
                             width: selectedOptions[option.name] === value ? "auto" : 32,
-                            backgroundColor: selectedOptions[option.name] === value ? "transparent" : value.toLowerCase()
+                            backgroundColor: selectedOptions[option.name] === value
+                              ? "transparent"
+                              : (() => {
+                                try {
+                                  const variant = product.variants?.edges?.find(v =>
+                                    v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
+                                  );
+                                  return getColorValue(value, variant?.node?.colorCode?.value);
+                                } catch (e) {
+                                  return getColorValue(value);
+                                }
+                              })()
                           }}
                         >
                           <motion.div
                             className="w-8 h-8 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: value.toLowerCase() }}
+                            style={{
+                              backgroundColor: (() => {
+                                try {
+                                  const variant = product.variants?.edges?.find(v =>
+                                    v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
+                                  );
+                                  return getColorValue(value, variant?.node?.colorCode?.value);
+                                } catch (e) {
+                                  return getColorValue(value);
+                                }
+                              })()
+                            }}
                             layout
                           />
                           <AnimatePresence>

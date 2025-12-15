@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct, formatShopifyPrice } from "@/lib/shopify";
+import { getColorValue } from "@/lib/colors";
 
 interface ShopifyProductCardProps {
   product: ShopifyProduct;
@@ -33,8 +34,8 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
   const activeImageAlt = selectedVariantImage ? node.title : (isHovered ? node.images.edges[currentImageIndex]?.node.altText : node.images.edges[0]?.node.altText);
 
   const price = node.priceRange.minVariantPrice;
-  const compareAtPrice = node.variants.edges[0]?.node.compareAtPrice;
-  const isAvailable = node.variants.edges.some(v => v.node.availableForSale);
+  const compareAtPrice = node.variants?.edges?.[0]?.node?.compareAtPrice;
+  const isAvailable = node.variants?.edges?.some(v => v?.node?.availableForSale) ?? false;
   const isSale = compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
 
   const handleColorClick = (e: React.MouseEvent, color: string) => {
@@ -42,8 +43,8 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
     e.stopPropagation();
 
     // Find variant with this color
-    const variant = node.variants.edges.find(edge =>
-      edge.node.selectedOptions.some(opt => opt.name === "Color" && opt.value === color)
+    const variant = node.variants?.edges?.find(edge =>
+      edge?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === color)
     );
 
     if (variant?.node.image) {
@@ -132,7 +133,18 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
                 key={i}
                 onClick={(e) => handleColorClick(e, color)}
                 className="w-5 h-5 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
-                style={{ backgroundColor: color.toLowerCase() }}
+                style={{
+                  backgroundColor: (() => {
+                    try {
+                      const variant = node.variants?.edges?.find(v =>
+                        v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === color)
+                      );
+                      return getColorValue(color, variant?.node?.colorCode?.value);
+                    } catch (e) {
+                      return getColorValue(color);
+                    }
+                  })()
+                }}
                 title={color}
               />
             ))}

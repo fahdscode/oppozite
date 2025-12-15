@@ -58,6 +58,9 @@ export interface ShopifyProduct {
             url: string;
             altText: string | null;
           } | null;
+          colorCode?: {
+            value: string;
+          } | null;
         };
       }>;
     };
@@ -96,7 +99,7 @@ const STOREFRONT_PRODUCTS_QUERY = `
               }
             }
           }
-          variants(first: 10) {
+          variants(first: 50) {
             edges {
               node {
                 id
@@ -114,9 +117,12 @@ const STOREFRONT_PRODUCTS_QUERY = `
                   name
                   value
                 }
-                image {
+                  image {
                   url
                   altText
+                }
+                colorCode: metafield(namespace: "custom", key: "color_code") {
+                  value
                 }
               }
             }
@@ -202,7 +208,7 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
                 }
               }
             }
-            variants(first: 10) {
+            variants(first: 50) {
               edges {
                 node {
                   id
@@ -220,9 +226,12 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
                     name
                     value
                   }
-                  image {
+                    image {
                     url
                     altText
+                  }
+                  colorCode: metafield(namespace: "custom", key: "color_code") {
+                    value
                   }
                 }
               }
@@ -280,6 +289,9 @@ const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
             image {
               url
               altText
+            }
+            colorCode: metafield(namespace: "custom", key: "color_code") {
+              value
             }
           }
         }
