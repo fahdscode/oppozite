@@ -18,80 +18,114 @@ const PRODUCT_QUERY = `
   }
 `;
 
+const COLLECTION_QUERY = `
+  query getCollectionMeta($handle: String!) {
+    collectionByHandle(handle: $handle) {
+      title
+      description
+      image {
+        url(transform: { maxWidth: 1200, maxHeight: 630, preferredContentType: JPG })
+      }
+    }
+  }
+`;
+
 // Using standard Vercel function signature without explicit types to avoid adding dependency
 export default async function handler(request: any, response: any) {
-  const { handle } = request.query;
+  const { handle, collection } = request.query;
 
-  if (!handle || typeof handle !== 'string') {
+  if (!handle && !collection) {
     return response.redirect('/');
   }
 
-  let debugLog = `Handle detected: ${handle}`;
-  let baseHtml = '';
+  let debugLog = `Params: handle=${handle}, collection=${collection}`;
+
+  // Default Fallbacks
+  let title = 'Oppozite Wears';
+  let description = 'Premium streetwear for those who dare to be different';
+  let image = `${SITE_URL}/og-image.png`;
 
   try {
-    // 1. Fetch Product Data
     const shopifyUrl = `https://${SHOPIFY_DOMAIN}/api/2025-07/graphql.json`;
     debugLog += ` | Shopify URL: ${shopifyUrl}`;
 
-    const shopifyRes = await fetch(shopifyUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
-      },
-      body: JSON.stringify({
-        query: PRODUCT_QUERY,
-        variables: { handle },
-      }),
-    });
+    if (collection) {
+      // Fetch Collection Data
+      const shopifyRes = await fetch(shopifyUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
+        },
+        body: JSON.stringify({
+          query: COLLECTION_QUERY,
+          variables: { handle: collection },
+        }),
+      });
+      const json = await shopifyRes.json();
+      const data = json?.data?.collectionByHandle;
 
-    const json = await shopifyRes.json();
-    const product = json?.data?.productByHandle;
-    debugLog += ` | Product Found: ${!!product}`;
+      if (data) {
+        title = `${data.title} | Oppozite Wears`;
+        description = data.description || description;
+        image = data.image?.url || image;
+        debugLog += ` | Collection Found: ${title}`;
+      } else {
+        debugLog += ` | Collection NOT Found`;
+      }
 
-    // Default Fallback
-    const title = product?.title ? `${product.title} | Oppozite Wears` : 'Oppozite Wears';
-    const description = product?.description || 'Premium streetwear for those who dare to be different';
-    const image = product?.images?.edges?.[0]?.node?.url || `${SITE_URL}/og-image.png`;
-    debugLog += ` | Image: ${image}`;
+    } else if (handle) {
+      // Fetch Product Data
+      const shopifyRes = await fetch(shopifyUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
+        },
+        body: JSON.stringify({
+          query: PRODUCT_QUERY,
+          variables: { handle },
+        }),
+      });
+      const json = await shopifyRes.json();
+      const data = json?.data?.productByHandle;
+
+      if (data) {
+        title = `${data.title} | Oppozite Wears`;
+        description = data.description || description;
+        image = data?.images?.edges?.[0]?.node?.url || image;
+        debugLog += ` | Product Found: ${title}`;
+      } else {
+        debugLog += ` | Product NOT Found`;
+      }
+    }
+
+    debugLog += ` | Final Image: ${image}`;
 
     // 2. Fetch the Base HTML
-    // Using the protocol and host from the request to ensure we hit the current deployment
     const proto = request.headers['x-forwarded-proto'] || 'https';
     const host = request.headers['x-forwarded-host'] || request.headers.host;
     const htmlUrl = `${proto}://${host}/index.html`;
     debugLog += ` | Fetching HTML from: ${htmlUrl}`;
 
     const baseHtmlRes = await fetch(htmlUrl);
-    baseHtml = await baseHtmlRes.text();
-
-    // 3. Inject Meta Tags
+    let baseHtml = await baseHtmlRes.text();
     let html = baseHtml;
 
     // Helper to remove all existing instances and append new one
-    // robust against attribute order
     const replaceMeta = (keyAttr: string, keyName: string, rawContent: string) => {
-      // Escape double quotes to prevent breaking HTML attributes
       const content = (rawContent || '').replace(/"/g, '&quot;');
-
-      // Regex to find any meta tag containing keyAttr="keyName" (case insensitive)
       const regex = new RegExp(`<meta[^>]*${keyAttr}=["']${keyName}["'][^>]*>`, 'gi');
-
-      // Remove all existing tags
       html = html.replace(regex, '');
-
-      // Append new tag before closing head
       const newTag = `<meta ${keyAttr}="${keyName}" content="${content}" />`;
       html = html.replace('</head>', `${newTag}\n</head>`);
     };
 
-    // Remove existing title tags (standard and OG)
+    // Replace Title
     html = html.replace(/<title>[\s\S]*?<\/title>/gi, '');
-    // Append new title
     html = html.replace('</head>', `<title>${title}</title>\n</head>`);
 
-    // Update Meta Tags
+    // Replace Meta Tags
     replaceMeta('property', 'og:title', title);
     replaceMeta('name', 'twitter:title', title);
 
@@ -102,21 +136,16 @@ export default async function handler(request: any, response: any) {
     replaceMeta('property', 'og:image', image);
     replaceMeta('name', 'twitter:image', image);
 
-    // Inject Debug Comment at the end of body
+    // Inject Debug Comment
     html = html.replace('</body>', `<!-- SEO DEBUG: ${debugLog} --></body>`);
 
-    // Set Cache Headers
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     response.setHeader('Content-Type', 'text/html; charset=utf-8');
-
     return response.status(200).send(html);
 
   } catch (error: any) {
     console.error('SEO Generation Error:', error);
-    // Serve base HTML (if available) with default tags on error, instead of redirect loop
-    if (baseHtml) {
-      return response.status(200).send(baseHtml + `<!-- SEO DEBUG ERROR: ${error.message} -->`);
-    }
+    // Fallback to basic redirect
     return response.redirect('/');
   }
 }

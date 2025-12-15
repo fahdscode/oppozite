@@ -1,6 +1,16 @@
 {
     "rewrites": [
         {
+            "source": "/shop",
+            "has": [
+                {
+                    "type": "query",
+                    "key": "collection"
+                }
+            ],
+            "destination": "/api/seo"
+        },
+        {
             "source": "/product/:handle",
             "destination": "/api/seo"
         },
