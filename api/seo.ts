@@ -66,30 +66,52 @@ export default async function handler(request: any, response: any) {
     baseHtml = await baseHtmlRes.text();
 
     // 3. Inject Meta Tags
-    // We strictly replace existing tags to avoid duplication, or inject if missing
-    // Simple string replacement strategy
+    // Using robust regex to handle potential minification (missing spaces, etc.)
     let html = baseHtml;
 
-    // Replace Title
-    html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+    // Helper to safe replace
+    const replaceMeta = (property: string, content: string) => {
+      // Matches <meta property="p" content="..." /> OR <meta name="p" ... />
+      // Handles variable whitespace, single/double quotes, and closing slash
+      const regex = new RegExp(`<meta (?:property|name)=["']${property}["'] content=["'][^"']*["']\\s*\\/?>`, 'i');
 
-    // Replace Description
-    html = html.replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`);
-    html = html.replace(/<meta property="og:description" content=".*?" \/>/, `<meta property="og:description" content="${description}" />`);
-    html = html.replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${description}" />`);
+      // If match found, replace it. If not, append it to <head>.
+      if (regex.test(html)) {
+        html = html.replace(regex, `<meta property="${property}" content="${content}" />`);
+      } else {
+        // If not found (unlikely for standard tags), inject before </head>
+        html = html.replace('</head>', `<meta property="${property}" content="${content}" /></head>`);
+      }
+    };
 
-    // Replace Title Meta
-    html = html.replace(/<meta property="og:title" content=".*?" \/>/, `<meta property="og:title" content="${title}" />`);
-    html = html.replace(/<meta name="twitter:title" content=".*?" \/>/, `<meta name="twitter:title" content="${title}" />`);
+    const replaceTitle = (newTitle: string) => {
+      const regex = /<title>[\s\S]*?<\/title>/i;
+      if (regex.test(html)) {
+        html = html.replace(regex, `<title>${newTitle}</title>`);
+      } else {
+        html = html.replace('</head>', `<title>${newTitle}</title></head>`);
+      }
+    };
 
-    // Replace Image
-    html = html.replace(/<meta property="og:image" content=".*?" \/>/, `<meta property="og:image" content="${image}" />`);
-    html = html.replace(/<meta name="twitter:image" content=".*?" \/>/, `<meta name="twitter:image" content="${image}" />`);
+    replaceTitle(title);
+
+    // Replace Descriptions
+    replaceMeta('description', description);
+    replaceMeta('og:description', description);
+    replaceMeta('twitter:description', description);
+
+    // Replace Titles
+    replaceMeta('og:title', title);
+    replaceMeta('twitter:title', title);
+
+    // Replace Images
+    replaceMeta('og:image', image);
+    replaceMeta('twitter:image', image);
 
     // Inject Debug Comment at the end of body
     html = html.replace('</body>', `<!-- SEO DEBUG: ${debugLog} --></body>`);
 
-    // Set Cache Headers (important for performance, but short enough for updates)
+    // Set Cache Headers
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     response.setHeader('Content-Type', 'text/html; charset=utf-8');
 
