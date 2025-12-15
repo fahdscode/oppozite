@@ -41,18 +41,12 @@ const FAQ = () => {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
-                            <AccordionTrigger>How do I find my size?</AccordionTrigger>
-                            <AccordionContent>
-                                Please refer to our <a href="/size-guide" className="underline hover:no-underline">Size Guide</a> to find the best fit for you.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="item-4">
                             <AccordionTrigger>Do you offer international shipping?</AccordionTrigger>
                             <AccordionContent>
                                 Currently, we only ship within Egypt. We are working on expanding our shipping capabilities soon.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-5">
+                        <AccordionItem value="item-4">
                             <AccordionTrigger>Can I change or cancel my order?</AccordionTrigger>
                             <AccordionContent>
                                 If you need to make changes, please contact our customer service immediately. Once an order has been dispatched, we cannot modify it.
