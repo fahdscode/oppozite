@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 interface ImageGalleryProps {
   images: string[];
@@ -12,6 +20,7 @@ interface ImageGalleryProps {
 export const ImageGallery = ({ images, productName, layoutId, selectedImage }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -24,21 +33,32 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
   useEffect(() => {
     if (selectedImage) {
       const index = images.findIndex(img => img === selectedImage);
-      if (index !== -1 && index !== selectedIndex) {
+      if (index !== -1) {
         setDirection(index > selectedIndex ? 1 : -1);
         setSelectedIndex(index);
+        api?.scrollTo(index);
       }
     }
-  }, [selectedImage, images]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedImage]);
+
+  // Sync carousel with internal selection changes
+  useEffect(() => {
+    if (api) {
+      api.scrollTo(selectedIndex);
+    }
+  }, [selectedIndex, api]);
 
   const handleNext = () => {
     setDirection(1);
-    setSelectedIndex((prev) => (prev + 1) % images.length);
+    const nextIndex = (selectedIndex + 1) % images.length;
+    setSelectedIndex(nextIndex);
   };
 
   const handlePrev = () => {
     setDirection(-1);
-    setSelectedIndex((prev) => (prev - 1 + images.length) % images.length);
+    const prevIndex = (selectedIndex - 1 + images.length) % images.length;
+    setSelectedIndex(prevIndex);
   };
 
   const slideVariants = {
@@ -59,34 +79,9 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
   const isSharedTransition = isFirstRender.current && selectedIndex === 0 && layoutId;
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row gap-4">
-      {/* Thumbnails */}
-      <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px]">
-        {images.map((image, index) => (
-          <motion.button
-            key={index}
-            onClick={() => {
-              setDirection(index > selectedIndex ? 1 : -1);
-              setSelectedIndex(index);
-            }}
-            className={`flex-shrink-0 w-16 h-20 lg:w-20 lg:h-24 border-2 transition-all duration-300 ${selectedIndex === index
-              ? "border-foreground"
-              : "border-transparent opacity-60 hover:opacity-100"
-              }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <img
-              src={image}
-              alt={`${productName} ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
-          </motion.button>
-        ))}
-      </div>
-
+    <div className="flex flex-col gap-4">
       {/* Main Image */}
-      <div className="relative flex-1 aspect-[3/4] bg-secondary overflow-hidden">
+      <div className="relative w-full aspect-[3/4] bg-secondary overflow-hidden">
         <AnimatePresence initial={!isSharedTransition} custom={direction} mode="wait">
           <motion.img
             key={selectedIndex}
@@ -110,7 +105,7 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
           <>
             <motion.button
               onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors rounded-full"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -118,7 +113,7 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
             </motion.button>
             <motion.button
               onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors rounded-full"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -128,10 +123,45 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
         )}
 
         {/* Image Counter */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm px-3 py-1 text-sm font-medium">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm px-3 py-1 text-sm font-medium rounded-full">
           {selectedIndex + 1} / {images.length}
         </div>
       </div>
+
+      {/* Thumbnails Carousel */}
+      <Carousel
+        setApi={setApi}
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-3 pb-1">
+          {images.map((image, index) => (
+            <CarouselItem key={index} className="pl-3 basis-1/5 sm:basis-1/6">
+              <motion.button
+                onClick={() => {
+                  setDirection(index > selectedIndex ? 1 : -1);
+                  setSelectedIndex(index);
+                }}
+                className={`w-full aspect-[3/4] border-2 transition-all duration-300 ${selectedIndex === index
+                  ? "border-foreground"
+                  : "border-transparent opacity-60 hover:opacity-100"
+                  }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img
+                  src={image}
+                  alt={`${productName} ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 };

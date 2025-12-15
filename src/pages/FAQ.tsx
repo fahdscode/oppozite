@@ -43,7 +43,7 @@ const FAQ = () => {
                         <AccordionItem value="item-3">
                             <AccordionTrigger>How do I find my size?</AccordionTrigger>
                             <AccordionContent>
-                                Please refer to our Size Guide located in the footer or on any product page to find the best fit for you.
+                                Please refer to our <a href="/size-guide" className="underline hover:no-underline">Size Guide</a> to find the best fit for you.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">

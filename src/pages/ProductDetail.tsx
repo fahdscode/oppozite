@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Minus, Plus, Ruler, Loader2 } from "lucide-react";
+import { ChevronRight, Minus, Plus, Loader2 } from "lucide-react";
 import { useShopifyProduct, useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
 import { formatShopifyPrice, ShopifyProduct } from "@/lib/shopify";
 import { ImageGallery } from "@/components/product/ImageGallery";
-import { SizeGuideModal } from "@/components/product/SizeGuideModal";
+
 import { ShopifyProductCard } from "@/components/product/ShopifyProductCard";
 
 import { Layout } from "@/components/layout/Layout";
@@ -18,7 +18,7 @@ const ProductDetail = () => {
   const addItem = useCartStore(state => state.addItem);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
-  const [showSizeGuide, setShowSizeGuide] = useState(false);
+
 
 
   const { data: product, isLoading, error } = useShopifyProduct(handle || '');
@@ -189,16 +189,6 @@ const ProductDetail = () => {
                     <span className="text-sm font-medium uppercase tracking-wider">
                       Select {option.name}
                     </span>
-                    {option.name.toLowerCase() === 'size' && (
-                      <motion.button
-                        onClick={() => setShowSizeGuide(true)}
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        whileHover={{ x: 3 }}
-                      >
-                        <Ruler className="w-4 h-4" />
-                        Size Guide
-                      </motion.button>
-                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {option.values.map((value) => (
@@ -330,13 +320,6 @@ const ProductDetail = () => {
             </div>
           </section>
         )}
-
-        {/* Size Guide Modal */}
-        <SizeGuideModal
-          isOpen={showSizeGuide}
-          onClose={() => setShowSizeGuide(false)}
-          category="General"
-        />
 
 
       </motion.div>

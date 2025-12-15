@@ -10,7 +10,7 @@ const footerLinks = {
     { name: "FAQs", path: "/faq" },
     { name: "Shipping", path: "/shipping" },
     { name: "Returns", path: "/returns" },
-    { name: "Size Guide", path: "/size-guide" },
+
   ],
   about: [
     { name: "Our Story", path: "/about" },

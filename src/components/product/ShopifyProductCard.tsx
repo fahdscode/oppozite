@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct, formatShopifyPrice } from "@/lib/shopify";
@@ -11,11 +11,26 @@ interface ShopifyProductCardProps {
 export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedVariantImage, setSelectedVariantImage] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { node } = product;
 
+  // Cycle images on hover
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isHovered && !selectedVariantImage && node.images.edges.length > 1) {
+      interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % node.images.edges.length);
+      }, 1500);
+    } else {
+      setCurrentImageIndex(0);
+    }
+    return () => clearInterval(interval);
+  }, [isHovered, selectedVariantImage, node.images.edges.length]);
+
   // Derive initial images
-  const mainImage = selectedVariantImage ? { url: selectedVariantImage, altText: node.title } : node.images.edges[0]?.node;
-  const hoverImage = node.images.edges[1]?.node;
+  // Priority: 1. Selected Variant Image, 2. Hover Cycling Image, 3. Default (first) Image
+  const activeImageUrl = selectedVariantImage || (isHovered ? node.images.edges[currentImageIndex]?.node.url : node.images.edges[0]?.node.url);
+  const activeImageAlt = selectedVariantImage ? node.title : (isHovered ? node.images.edges[currentImageIndex]?.node.altText : node.images.edges[0]?.node.altText);
 
   const price = node.priceRange.minVariantPrice;
   const compareAtPrice = node.variants.edges[0]?.node.compareAtPrice;
@@ -55,28 +70,18 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
     >
       {/* Image Container */}
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
-        {mainImage ? (
+        {activeImageUrl ? (
           <Link to={`/product/${node.handle}`} className="block absolute inset-0">
             <motion.img
               layoutId={`product-image-${node.handle}`}
-              key={mainImage.url} // Key change triggers animation
+              key={activeImageUrl} // Key change triggers animation
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              src={mainImage.url}
-              alt={mainImage.altText || node.title}
-              className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered && hoverImage && !selectedVariantImage ? "opacity-0" : "opacity-100"
-                }`}
+              src={activeImageUrl}
+              alt={activeImageAlt || node.title}
+              className="product-card-image absolute inset-0 w-full h-full object-cover"
             />
-
-            {hoverImage && !selectedVariantImage && (
-              <img
-                src={hoverImage.url}
-                alt={hoverImage.altText || node.title}
-                className={`product-card-image absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"
-                  }`}
-              />
-            )}
           </Link>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
