@@ -28,7 +28,7 @@ export const login = async () => {
     }
 
     console.log('[Auth] Initiating login with redirect_uri:', redirectUri);
-    const scope = 'openid email https://api.customers.com/auth/customer.graphql';
+    const scope = 'openid email customer-account-api:full';
     const state = Math.random().toString(36).substring(7);
 
     const verifier = await generateCodeVerifier();
