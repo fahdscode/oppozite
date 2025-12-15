@@ -10,7 +10,7 @@ const PRODUCT_QUERY = `
       images(first: 1) {
         edges {
           node {
-            url
+            url(transform: { maxWidth: 1200, maxHeight: 630, preferredContentType: JPG })
           }
         }
       }
