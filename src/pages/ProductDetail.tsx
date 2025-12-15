@@ -199,76 +199,86 @@ const ProductDetail = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {option.values?.map((value) => (
-                      option.name === "Color" ? (
-                        <motion.button
-                          key={value}
-                          onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
-                          className={`h-8 rounded-full border transition-all flex items-center justify-center gap-2 overflow-hidden ${selectedOptions[option.name] === value
-                            ? "pr-3 ring-2 ring-offset-2 ring-foreground border-transparent"
-                            : "w-8 border-border hover:border-foreground"
-                            }`}
-                          style={{
-                            backgroundColor: (() => {
-                              try {
-                                if (selectedOptions[option.name] === value) return 'transparent';
-                                const variant = product.variants?.edges?.find(v =>
-                                  v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
-                                );
-                                return getColorValue(value, variant?.node?.colorCode?.value);
-                              } catch (e) {
-                                return getColorValue(value);
-                              }
-                            })()
-                          }}
-                          title={value}
-                          layout
-                          animate={{
-                            width: selectedOptions[option.name] === value ? "auto" : 32,
-                            backgroundColor: selectedOptions[option.name] === value
-                              ? "transparent"
-                              : (() => {
-                                try {
-                                  const variant = product.variants?.edges?.find(v =>
-                                    v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
-                                  );
-                                  return getColorValue(value, variant?.node?.colorCode?.value);
-                                } catch (e) {
-                                  return getColorValue(value);
-                                }
-                              })()
-                          }}
-                        >
-                          <motion.div
-                            className="w-8 h-8 rounded-full flex-shrink-0"
-                            style={{
-                              backgroundColor: (() => {
-                                try {
-                                  const variant = product.variants?.edges?.find(v =>
-                                    v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
-                                  );
-                                  return getColorValue(value, variant?.node?.colorCode?.value);
-                                } catch (e) {
-                                  return getColorValue(value);
-                                }
-                              })()
-                            }}
+                      option.name === "Color" ? (() => {
+                        const isSelected = selectedOptions[option.name] === value;
+                        const variantColorValue = (() => {
+                          try {
+                            const variant = product.variants?.edges?.find(v =>
+                              v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === value)
+                            );
+                            return getColorValue(value, variant?.node?.colorCode?.value);
+                          } catch (e) {
+                            return getColorValue(value);
+                          }
+                        })();
+
+                        // Determine background color based on selection state
+                        // If selected -> transparent (ring handles selection visual)
+                        // If not selected -> color value
+                        const backgroundColor = isSelected ? "transparent" : variantColorValue;
+
+                        return (
+                          <motion.button
+                            key={value}
+                            onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
+                            className={`h-8 rounded-full border flex items-center justify-start overflow-hidden relative ${isSelected
+                              ? "ring-2 ring-offset-2 ring-foreground border-transparent pl-1" // Added pl-1 to center the circle visually when selected
+                              : "border-border hover:border-foreground"
+                              }`}
                             layout
-                          />
-                          <AnimatePresence>
-                            {selectedOptions[option.name] === value && (
-                              <motion.span
-                                key="text"
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: "auto" }}
-                                exit={{ opacity: 0, width: 0 }}
-                                className="text-xs font-medium uppercase whitespace-nowrap overflow-hidden"
-                              >
-                                {value}
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </motion.button>
-                      ) : (
+                            initial={false}
+                            animate={{
+                              backgroundColor,
+                              // When selected, width is auto. When not, it's 32px (h-8 = 32px).
+                              // We let the padding handling below manage the spacing.
+                              width: isSelected ? "auto" : 32,
+                              paddingRight: isSelected ? 12 : 0, // Animate padding-right (pr-3 is 12px)
+                            }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 30,
+                              mass: 1
+                            }}
+                            title={value}
+                          >
+                            <motion.div
+                              className="w-6 h-6 rounded-full flex-shrink-0 m-1" // Fixed margin and size
+                              layout
+                              style={{ backgroundColor: variantColorValue }}
+                            />
+                            <div className="flex overflow-hidden">
+                              <AnimatePresence mode="popLayout" initial={false}>
+                                {isSelected && (
+                                  <motion.span
+                                    key="text"
+                                    initial={{ opacity: 0, width: 0, marginRight: 0 }}
+                                    animate={{
+                                      opacity: 1,
+                                      width: "auto",
+                                      marginRight: 0
+                                    }}
+                                    exit={{
+                                      opacity: 0,
+                                      width: 0,
+                                      marginRight: 0
+                                    }}
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 500,
+                                      damping: 30,
+                                      mass: 1
+                                    }}
+                                    className="text-xs font-medium uppercase whitespace-nowrap"
+                                  >
+                                    {value}
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          </motion.button>
+                        );
+                      })() : (
                         <motion.button
                           key={value}
                           onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
