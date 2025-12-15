@@ -123,6 +123,7 @@ const STOREFRONT_PRODUCTS_QUERY = `
                 }
                 colorCode: metafield(namespace: "custom", key: "color_code") {
                   value
+                  
                 }
               }
             }
@@ -540,4 +541,95 @@ export function formatShopifyPrice(amount: string, currencyCode: string): string
     style: 'currency',
     currency: currencyCode,
   }).format(parseFloat(amount));
+}
+
+export interface ShopifyMenuItem {
+  id: string;
+  title: string;
+  url: string;
+  items: ShopifyMenuItem[];
+}
+
+export interface ShopifyMenu {
+  handle: string;
+  title: string;
+  items: ShopifyMenuItem[];
+}
+
+const MENU_QUERY = `
+  query GetMenu($handle: String!) {
+    menu(handle: $handle) {
+      id
+      handle
+      title
+      items {
+        id
+        title
+        url
+        items {
+          id
+          title
+          url
+          items {
+            id
+            title
+            url
+            items {
+              id
+              title
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Fetch menu by handle
+export async function fetchShopifyMenu(handle: string): Promise<ShopifyMenu | null> {
+  const data = await storefrontApiRequest<{
+    data: {
+      menu: {
+        id: string;
+        handle: string;
+        title: string;
+        items: Array<{
+          id: string;
+          title: string;
+          url: string;
+          items: Array<{
+            id: string;
+            title: string;
+            url: string;
+            items: Array<{
+              id: string;
+              title: string;
+              url: string;
+              items: Array<{
+                id: string;
+                title: string;
+                url: string;
+              }>;
+            }>;
+          }>;
+        }>;
+      } | null;
+    };
+  }>(MENU_QUERY, { handle });
+
+  if (!data?.data?.menu) return null;
+
+  const mapItem = (item: any): ShopifyMenuItem => ({
+    id: item.id,
+    title: item.title,
+    url: item.url,
+    items: item.items ? item.items.map(mapItem) : [],
+  });
+
+  return {
+    handle: data.data.menu.handle,
+    title: data.data.menu.title,
+    items: data.data.menu.items.map(mapItem),
+  };
 }
