@@ -24,7 +24,7 @@ import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import Orders from "./pages/Orders"; // Added import for Orders
+
 
 const queryClient = new QueryClient();
 
@@ -40,7 +40,7 @@ const AnimatedRoutes = () => {
         <Route path="/collections" element={<Collections />} />
         <Route path="/about" element={<About />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/account/orders" element={<Orders />} /> {/* Added route for Orders */}
+
 
         {/* Footer Pages */}
         <Route path="/best-sellers" element={<BestSellers />} />
