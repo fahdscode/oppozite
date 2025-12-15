@@ -5,16 +5,16 @@ import { Link } from "react-router-dom";
 import { formatShopifyPrice } from "@/lib/shopify";
 
 export const CartDrawer = () => {
-  const { 
-    items, 
-    isCartOpen, 
-    closeCart, 
-    updateQuantity, 
-    removeItem, 
+  const {
+    items,
+    isCartOpen,
+    closeCart,
+    updateQuantity,
+    removeItem,
     totalItems,
     totalPrice,
     isLoading,
-    createCheckout 
+    createCheckout
   } = useCartStore();
 
   const itemCount = totalItems();
@@ -134,8 +134,17 @@ export const CartDrawer = () => {
                               </button>
                               <span className="w-8 text-center text-sm">{item.quantity}</span>
                               <button
-                                onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                                className="p-2 hover:bg-muted transition-colors"
+                                onClick={() => {
+                                  const limit = item.quantityAvailable ?? Infinity;
+                                  if (item.quantity < limit) {
+                                    updateQuantity(item.variantId, item.quantity + 1);
+                                  }
+                                }}
+                                disabled={item.quantity >= (item.quantityAvailable ?? Infinity)}
+                                className={`p-2 transition-colors ${item.quantity >= (item.quantityAvailable ?? Infinity)
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "hover:bg-muted"
+                                  }`}
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -178,7 +187,7 @@ export const CartDrawer = () => {
 
                 {/* Actions */}
                 <div className="space-y-3">
-                  <button 
+                  <button
                     onClick={handleCheckout}
                     disabled={isLoading}
                     className="w-full btn-primary flex items-center justify-center gap-2"

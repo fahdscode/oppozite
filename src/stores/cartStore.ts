@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { toast } from 'sonner';
 import { ShopifyProduct, ShopifyCartItem, createStorefrontCheckout } from '@/lib/shopify';
 
 interface CartStore {
@@ -20,7 +21,7 @@ interface CartStore {
   createCheckout: () => Promise<void>;
   openCart: () => void;
   closeCart: () => void;
-  
+
   // Computed
   totalItems: () => number;
   totalPrice: () => number;
@@ -38,17 +39,32 @@ export const useCartStore = create<CartStore>()(
       addItem: (item) => {
         const { items } = get();
         const existingItem = items.find(i => i.variantId === item.variantId);
-        
+        const availableStock = item.quantityAvailable ?? Infinity; // Default to infinity if not tracked/available
+
         if (existingItem) {
+          const newQuantity = existingItem.quantity + item.quantity;
+          if (newQuantity > availableStock) {
+            toast.error("Cannot add to cart", {
+              description: `Only ${availableStock} items available in stock`
+            });
+            return;
+          }
+
           set({
             items: items.map(i =>
               i.variantId === item.variantId
-                ? { ...i, quantity: i.quantity + item.quantity }
+                ? { ...i, quantity: newQuantity }
                 : i
             ),
             isCartOpen: true,
           });
         } else {
+          if (item.quantity > availableStock) {
+            toast.error("Cannot add to cart", {
+              description: `Only ${availableStock} items available in stock`
+            });
+            return;
+          }
           set({ items: [...items, item], isCartOpen: true });
         }
       },
@@ -58,7 +74,18 @@ export const useCartStore = create<CartStore>()(
           get().removeItem(variantId);
           return;
         }
-        
+
+        const item = get().items.find(i => i.variantId === variantId);
+        if (item) {
+          const availableStock = item.quantityAvailable ?? Infinity;
+          if (quantity > availableStock) {
+            toast.error("Cannot update quantity", {
+              description: `Only ${availableStock} items available in stock`
+            });
+            return;
+          }
+        }
+
         set({
           items: get().items.map(item =>
             item.variantId === variantId ? { ...item, quantity } : item

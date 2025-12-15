@@ -61,6 +61,7 @@ export interface ShopifyProduct {
           colorCode?: {
             value: string;
           } | null;
+          quantityAvailable?: number;
         };
       }>;
     };
@@ -123,8 +124,8 @@ const STOREFRONT_PRODUCTS_QUERY = `
                 }
                 colorCode: metafield(namespace: "custom", key: "color_code") {
                   value
-                  
                 }
+                quantityAvailable
               }
             }
           }
@@ -234,6 +235,7 @@ const STOREFRONT_COLLECTION_PRODUCTS_QUERY = `
                   colorCode: metafield(namespace: "custom", key: "color_code") {
                     value
                   }
+                  quantityAvailable
                 }
               }
             }
@@ -294,6 +296,7 @@ const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
             colorCode: metafield(namespace: "custom", key: "color_code") {
               value
             }
+            quantityAvailable
           }
         }
       }
@@ -497,6 +500,7 @@ export interface ShopifyCartItem {
     name: string;
     value: string;
   }>;
+  quantityAvailable?: number;
 }
 
 // Create checkout

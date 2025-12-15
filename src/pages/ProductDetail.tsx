@@ -96,6 +96,7 @@ const ProductDetail = () => {
       price: selectedVariant.price,
       quantity,
       selectedOptions: selectedVariant.selectedOptions,
+      quantityAvailable: selectedVariant.quantityAvailable,
     });
 
     toast.success("Added to bag", {
@@ -313,8 +314,15 @@ const ProductDetail = () => {
                     </motion.button>
                     <span className="w-12 text-center font-medium">{quantity}</span>
                     <motion.button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-12 h-12 flex items-center justify-center hover:bg-secondary transition-colors"
+                      onClick={() => {
+                        const limit = selectedVariant?.quantityAvailable ?? Infinity;
+                        setQuantity(Math.min(limit, quantity + 1));
+                      }}
+                      disabled={quantity >= (selectedVariant?.quantityAvailable ?? Infinity)}
+                      className={`w-12 h-12 flex items-center justify-center transition-colors ${quantity >= (selectedVariant?.quantityAvailable ?? Infinity)
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-secondary"
+                        }`}
                       whileTap={{ scale: 0.9 }}
                     >
                       <Plus className="w-4 h-4" />
