@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { login, logout, openAccount } from "@/lib/auth";
+import { login, openAccount } from "@/lib/auth";
 
 // Fallback menu
 const defaultNavLinks = [
@@ -121,9 +121,7 @@ export const Header = () => {
                     <DropdownMenuItem onClick={openAccount}>
                       My Orders
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={logout}>
-                      Logout
-                    </DropdownMenuItem>
+
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -189,9 +187,7 @@ export const Header = () => {
                 <button onClick={openAccount} className="w-full btn-outline text-center text-black">
                   My Orders
                 </button>
-                <button onClick={logout} className="w-full btn-ghost text-center text-red-600 hover:bg-red-50">
-                  Logout
-                </button>
+
               </div>
             </motion.div>
           </>

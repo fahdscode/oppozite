@@ -172,7 +172,7 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                     Popular Searches
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {["Tops", "Bottoms", "Outerwear", "New Arrivals"].map((term) => (
+                    {["Hoodie", "Set", "Jacket", "Denim", "Pullover"].map((term) => (
                       <motion.button
                         key={term}
                         onClick={() => setQuery(term)}

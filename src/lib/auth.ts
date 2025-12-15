@@ -6,10 +6,7 @@ export const login = () => {
     window.location.href = `https://shopify.com/${SHOP_ID}/account`;
 };
 
-export const logout = () => {
-    // Redirect to Shopify logout
-    window.location.href = `https://shopify.com/authentication/${SHOP_ID}/logout`;
-};
+
 
 export const openAccount = () => {
     // Redirect to the Shopify Customer Account page
