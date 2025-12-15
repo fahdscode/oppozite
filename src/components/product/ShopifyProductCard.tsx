@@ -65,12 +65,12 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
         stiffness: 300,
         damping: 20
       }}
-      className="product-card group"
+      className="product-card group border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl p-3 bg-card"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image Container */}
-      <div className="relative aspect-[3/4] bg-muted overflow-hidden">
+      <div className="relative aspect-[3/4] bg-muted overflow-hidden rounded-lg">
         {activeImageUrl ? (
           <Link to={`/product/${node.handle}`} className="block absolute inset-0">
             <motion.img
