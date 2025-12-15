@@ -20,7 +20,14 @@ async function generateCodeChallenge(verifier: string) {
 }
 
 export const login = async () => {
-    const redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin + '/account/orders'; // Redirect to orders page
+    let redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin + '/account/orders';
+
+    // Force localhost usage if running locally, ignoring potentially stale env vars
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        redirectUri = window.location.origin + '/account/orders';
+    }
+
+    console.log('[Auth] Initiating login with redirect_uri:', redirectUri);
     const scope = 'openid email https://api.customers.com/auth/customer.graphql';
     const state = Math.random().toString(36).substring(7);
 
@@ -62,7 +69,11 @@ export const exchangeToken = async (code: string) => {
     const verifier = sessionStorage.getItem('shopify_auth_verifier');
     if (!verifier) throw new Error('No code verifier found');
 
-    const redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin + '/account/orders';
+    let redirectUri = import.meta.env.VITE_SHOPIFY_REDIRECT_URI || window.location.origin + '/account/orders';
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        redirectUri = window.location.origin + '/account/orders';
+    }
 
     const body = new URLSearchParams({
         grant_type: 'authorization_code',
