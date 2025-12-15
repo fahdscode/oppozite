@@ -54,6 +54,7 @@ export default async function handler(request: any, response: any) {
     const title = product?.title ? `${product.title} | Oppozite Wears` : 'Oppozite Wears';
     const description = product?.description || 'Premium streetwear for those who dare to be different';
     const image = product?.images?.edges?.[0]?.node?.url || `${SITE_URL}/og-image.png`;
+    debugLog += ` | Image: ${image}`;
 
     // 2. Fetch the Base HTML
     // Using the protocol and host from the request to ensure we hit the current deployment
@@ -66,47 +67,40 @@ export default async function handler(request: any, response: any) {
     baseHtml = await baseHtmlRes.text();
 
     // 3. Inject Meta Tags
-    // Using robust regex to handle potential minification (missing spaces, etc.)
     let html = baseHtml;
 
-    // Helper to safe replace
-    const replaceMeta = (property: string, content: string) => {
-      // Matches <meta property="p" content="..." /> OR <meta name="p" ... />
-      // Handles variable whitespace, single/double quotes, and closing slash
-      const regex = new RegExp(`<meta (?:property|name)=["']${property}["'] content=["'][^"']*["']\\s*\\/?>`, 'i');
+    // Helper to remove all existing instances and append new one
+    // robust against attribute order
+    const replaceMeta = (keyAttr: string, keyName: string, rawContent: string) => {
+      // Escape double quotes to prevent breaking HTML attributes
+      const content = (rawContent || '').replace(/"/g, '&quot;');
 
-      // If match found, replace it. If not, append it to <head>.
-      if (regex.test(html)) {
-        html = html.replace(regex, `<meta property="${property}" content="${content}" />`);
-      } else {
-        // If not found (unlikely for standard tags), inject before </head>
-        html = html.replace('</head>', `<meta property="${property}" content="${content}" /></head>`);
-      }
+      // Regex to find any meta tag containing keyAttr="keyName" (case insensitive)
+      const regex = new RegExp(`<meta[^>]*${keyAttr}=["']${keyName}["'][^>]*>`, 'gi');
+
+      // Remove all existing tags
+      html = html.replace(regex, '');
+
+      // Append new tag before closing head
+      const newTag = `<meta ${keyAttr}="${keyName}" content="${content}" />`;
+      html = html.replace('</head>', `${newTag}\n</head>`);
     };
 
-    const replaceTitle = (newTitle: string) => {
-      const regex = /<title>[\s\S]*?<\/title>/i;
-      if (regex.test(html)) {
-        html = html.replace(regex, `<title>${newTitle}</title>`);
-      } else {
-        html = html.replace('</head>', `<title>${newTitle}</title></head>`);
-      }
-    };
+    // Remove existing title tags (standard and OG)
+    html = html.replace(/<title>[\s\S]*?<\/title>/gi, '');
+    // Append new title
+    html = html.replace('</head>', `<title>${title}</title>\n</head>`);
 
-    replaceTitle(title);
+    // Update Meta Tags
+    replaceMeta('property', 'og:title', title);
+    replaceMeta('name', 'twitter:title', title);
 
-    // Replace Descriptions
-    replaceMeta('description', description);
-    replaceMeta('og:description', description);
-    replaceMeta('twitter:description', description);
+    replaceMeta('name', 'description', description);
+    replaceMeta('property', 'og:description', description);
+    replaceMeta('name', 'twitter:description', description);
 
-    // Replace Titles
-    replaceMeta('og:title', title);
-    replaceMeta('twitter:title', title);
-
-    // Replace Images
-    replaceMeta('og:image', image);
-    replaceMeta('twitter:image', image);
+    replaceMeta('property', 'og:image', image);
+    replaceMeta('name', 'twitter:image', image);
 
     // Inject Debug Comment at the end of body
     html = html.replace('</body>', `<!-- SEO DEBUG: ${debugLog} --></body>`);
