@@ -637,3 +637,12 @@ export async function fetchShopifyMenu(handle: string): Promise<ShopifyMenu | nu
     items: data.data.menu.items.map(mapItem),
   };
 }
+
+// Optimization for Shopify Images
+export function optimizeShopifyImage(url: string, width?: number, height?: number): string {
+  if (!url) return "";
+  const newUrl = new URL(url);
+  if (width) newUrl.searchParams.set("width", width.toString());
+  if (height) newUrl.searchParams.set("height", height.toString());
+  return newUrl.toString();
+}

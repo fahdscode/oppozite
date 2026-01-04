@@ -9,6 +9,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { optimizeShopifyImage } from "@/lib/shopify";
 
 interface ImageGalleryProps {
   images: string[];
@@ -86,7 +87,7 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
           <motion.img
             key={selectedIndex}
             layoutId={selectedIndex === 0 && layoutId ? layoutId : undefined}
-            src={images[selectedIndex]}
+            src={optimizeShopifyImage(images[selectedIndex], 1000)}
             alt={productName}
             className="absolute inset-0 w-full h-full object-cover"
             custom={direction}
@@ -153,7 +154,7 @@ export const ImageGallery = ({ images, productName, layoutId, selectedImage }: I
                 whileTap={{ scale: 0.95 }}
               >
                 <img
-                  src={image}
+                  src={optimizeShopifyImage(image, 200)}
                   alt={`${productName} ${index + 1}`}
                   className="w-full h-full object-cover"
                 />

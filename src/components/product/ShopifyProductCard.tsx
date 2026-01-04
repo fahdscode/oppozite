@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShopifyProduct, formatShopifyPrice } from "@/lib/shopify";
+import { ShopifyProduct, formatShopifyPrice, optimizeShopifyImage } from "@/lib/shopify";
 import { getColorValue } from "@/lib/colors";
 
 interface ShopifyProductCardProps {
@@ -79,7 +79,7 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              src={activeImageUrl}
+              src={optimizeShopifyImage(activeImageUrl, 600)}
               alt={activeImageAlt || node.title}
               className="product-card-image absolute inset-0 w-full h-full object-cover"
             />
