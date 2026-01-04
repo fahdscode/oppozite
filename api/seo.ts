@@ -1,6 +1,6 @@
 const SHOPIFY_DOMAIN = process.env.VITE_SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN || 'oppozite-wears.myshopify.com';
 const SHOPIFY_TOKEN = process.env.VITE_SHOPIFY_STOREFRONT_TOKEN || process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || 'd6273dc275a3bc860f775a3efb506f52';
-const SITE_URL = process.env.VITE_SITE_URL || 'https://www.oppozitewears.com';
+const SITE_URL = process.env.VITE_SITE_URL || 'https://oppozitewears.com';
 
 const PRODUCT_QUERY = `
   query getProductMeta($handle: String!) {
@@ -49,68 +49,94 @@ export default async function handler(request: any, response: any) {
     const shopifyUrl = `https://${SHOPIFY_DOMAIN}/api/2025-07/graphql.json`;
     debugLog += ` | Shopify URL: ${shopifyUrl}`;
 
-    if (collection) {
-      // Fetch Collection Data
-      const shopifyRes = await fetch(shopifyUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
-        },
-        body: JSON.stringify({
-          query: COLLECTION_QUERY,
-          variables: { handle: collection },
-        }),
-      });
-      const json = await shopifyRes.json();
-      const data = json?.data?.collectionByHandle;
-
-      if (data) {
-        title = `${data.title} | Oppozite Wears`;
-        description = data.description || description;
-        image = data.image?.url || image;
-        debugLog += ` | Collection Found: ${title}`;
-      } else {
-        debugLog += ` | Collection NOT Found`;
-      }
-
-    } else if (handle) {
-      // Fetch Product Data
-      const shopifyRes = await fetch(shopifyUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
-        },
-        body: JSON.stringify({
-          query: PRODUCT_QUERY,
-          variables: { handle },
-        }),
-      });
-      const json = await shopifyRes.json();
-      const data = json?.data?.productByHandle;
-
-      if (data) {
-        title = `${data.title} | Oppozite Wears`;
-        description = data.description || description;
-        image = data?.images?.edges?.[0]?.node?.url || image;
-        debugLog += ` | Product Found: ${title}`;
-      } else {
-        debugLog += ` | Product NOT Found`;
-      }
-    }
-
-    debugLog += ` | Final Image: ${image}`;
-
-    // 2. Fetch the Base HTML
+    // 1. Prepare HTML URL
     const proto = request.headers['x-forwarded-proto'] || 'https';
     const host = request.headers['x-forwarded-host'] || request.headers.host;
     const htmlUrl = `${proto}://${host}/index.html`;
     debugLog += ` | Fetching HTML from: ${htmlUrl}`;
 
-    const baseHtmlRes = await fetch(htmlUrl);
-    let baseHtml = await baseHtmlRes.text();
-    let html = baseHtml;
+    // 2. Parallel Execution: Fetch Shopify Data AND Base HTML
+    const fetchShopify = async () => {
+      if (collection) {
+        // Fetch Collection Data
+        const res = await fetch(shopifyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
+          },
+          body: JSON.stringify({
+            query: COLLECTION_QUERY,
+            variables: { handle: collection },
+          }),
+        });
+        const json = await res.json();
+        return { type: 'collection', data: json?.data?.collectionByHandle };
+      } else if (handle) {
+        // Fetch Product Data
+        const res = await fetch(shopifyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
+          },
+          body: JSON.stringify({
+            query: PRODUCT_QUERY,
+            variables: { handle },
+          }),
+        });
+        const json = await res.json();
+        return { type: 'product', data: json?.data?.productByHandle };
+      }
+      return null;
+    };
+
+    const [shopifyResult, baseHtmlRes] = await Promise.all([
+      fetchShopify().catch(err => {
+        console.error('Shopify Fetch Error:', err);
+        return null;
+      }),
+      fetch(htmlUrl).catch(err => {
+        console.error('HTML Fetch Error:', err);
+        return null;
+      })
+    ]);
+
+    // Process Shopify Result
+    if (shopifyResult?.data) {
+      const { data, type } = shopifyResult;
+      title = `${data.title} | Oppozite Wears`;
+      description = data.description || description;
+
+      if (type === 'collection') {
+        image = data.image?.url || image;
+        debugLog += ` | Collection Found: ${title}`;
+      } else {
+        image = data.images?.edges?.[0]?.node?.url || image;
+        debugLog += ` | Product Found: ${title}`;
+      }
+    } else {
+      debugLog += ` | Content NOT Found or Error`;
+    }
+
+    debugLog += ` | Final Image: ${image}`;
+
+    // Process HTML
+    let html = '';
+    if (baseHtmlRes && baseHtmlRes.ok) {
+      html = await baseHtmlRes.text();
+    } else {
+      // Fallback HTML if fetch fails (Critical fallback)
+      console.error('Failed to fetch index.html, using fallback.');
+      // We try to return a valid HTML shell that loads the app scripts
+      // Note: We can't easily guess the script name in Vite (hashed), 
+      // so this is a "Hail Mary" that relies on the rewrite trying again or something, 
+      // but typically if index.html fetch fails, we should just redirect to avoid a blank screen
+      // IF we can't serve the app.
+      // However, simply redirecting to / might be annoying. 
+      // We'll proceed with redirect if HTML failure, as we can't render the App without the JS refs.
+      return response.redirect(307, '/index.html'); // Redirect to the static file directly
+    }
 
     // Helper to remove all existing instances and append new one
     const replaceMeta = (keyAttr: string, keyName: string, rawContent: string) => {
@@ -144,8 +170,10 @@ export default async function handler(request: any, response: any) {
     return response.status(200).send(html);
 
   } catch (error: any) {
-    console.error('SEO Generation Error:', error);
-    // Fallback to basic redirect
+    console.error('SEO Generation Fatal Error:', error);
+    // Fallback: Just let the client handle it via redirecting to the route (but bypassing API)
+    // To bypass API, we might redirect to /index.html, but that changes URL.
+    // Ideally we output something.
     return response.redirect('/');
   }
 }

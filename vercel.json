@@ -1,4 +1,5 @@
 {
+    "cleanUrls": true,
     "rewrites": [
         {
             "source": "/shop",
@@ -15,7 +16,7 @@
             "destination": "/api/seo"
         },
         {
-            "source": "/(.*)",
+            "source": "/((?!api/.*).*)",
             "destination": "/index.html"
         }
     ]
