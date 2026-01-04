@@ -32,7 +32,7 @@ const ShopPage = () => {
     fetchNextPage: fetchNextAllPage,
     hasNextPage: hasNextAllPage,
     isFetchingNextPage: isFetchingNextAllPage
-  } = useShopifyProducts(20, undefined);
+  } = useShopifyProducts(20, undefined, { enabled: !collectionHandle });
 
   const isLoading = collectionHandle ? isCollectionLoading : isAllLoading;
   const error = collectionHandle ? collectionError : allError;

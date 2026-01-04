@@ -385,36 +385,64 @@ const CART_CREATE_MUTATION = `
 
 // Storefront API helper function
 export async function storefrontApiRequest<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
-  const response = await fetch(SHOPIFY_STOREFRONT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  });
+  const token = SHOPIFY_STOREFRONT_TOKEN.trim();
+  const maxRetries = 3;
+  let lastError;
 
-  if (response.status === 402) {
-    toast.error("Shopify: Payment required", {
-      description: "Shopify API access requires an active Shopify billing plan. Visit https://admin.shopify.com to upgrade.",
-    });
-    throw new Error("Payment required");
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+      const response = await fetch(SHOPIFY_STOREFRONT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': token
+        },
+        body: JSON.stringify({
+          query,
+          variables,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (response.status === 402) {
+        toast.error("Shopify: Payment required", {
+          description: "Shopify API access requires an active Shopify billing plan. Visit https://admin.shopify.com to upgrade.",
+        });
+        throw new Error("Payment required");
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.errors) {
+        throw new Error(`Error calling Shopify: ${data.errors.map((e: { message: string }) => e.message).join(', ')}`);
+      }
+
+      return data;
+    } catch (error: any) {
+      console.warn(`[Shopify] Request attempt ${i + 1} failed:`, error);
+      lastError = error;
+
+      const isNetworkError = error.message.includes('fetch') || error.message.includes('network') || error.name === 'AbortError' || error.cause;
+
+      if (!isNetworkError && i < maxRetries - 1) {
+        if (error.message === "Payment required") throw error;
+      }
+
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      }
+    }
   }
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  if (data.errors) {
-    throw new Error(`Error calling Shopify: ${data.errors.map((e: { message: string }) => e.message).join(', ')}`);
-  }
-
-  return data;
+  throw lastError;
 }
 
 // Fetch all products
