@@ -59,12 +59,14 @@ export const Lookbook = () => {
                     <button
                         onClick={() => handleSlide('left')}
                         className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors duration-300"
+                        aria-label="Previous slide"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => handleSlide('right')}
                         className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors duration-300"
+                        aria-label="Next slide"
                     >
                         <ArrowRight className="w-5 h-5" />
                     </button>

@@ -309,6 +309,7 @@ const ProductDetail = () => {
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-12 h-12 flex items-center justify-center hover:bg-secondary transition-colors"
                       whileTap={{ scale: 0.9 }}
+                      aria-label="Decrease quantity"
                     >
                       <Minus className="w-4 h-4" />
                     </motion.button>
@@ -320,10 +321,11 @@ const ProductDetail = () => {
                       }}
                       disabled={quantity >= (selectedVariant?.quantityAvailable ?? Infinity)}
                       className={`w-12 h-12 flex items-center justify-center transition-colors ${quantity >= (selectedVariant?.quantityAvailable ?? Infinity)
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-secondary"
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-secondary"
                         }`}
                       whileTap={{ scale: 0.9 }}
+                      aria-label="Increase quantity"
                     >
                       <Plus className="w-4 h-4" />
                     </motion.button>

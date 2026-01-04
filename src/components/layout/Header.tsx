@@ -103,6 +103,7 @@ export const Header = () => {
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 btn-ghost flex items-center justify-center"
+                aria-label="Search"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -110,7 +111,7 @@ export const Header = () => {
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="p-2 btn-ghost flex items-center justify-center">
+                    <button className="p-2 btn-ghost flex items-center justify-center" aria-label="Account">
                       <User className="w-5 h-5" />
                     </button>
                   </DropdownMenuTrigger>
@@ -129,6 +130,7 @@ export const Header = () => {
               <button
                 onClick={openCart}
                 className="p-2 btn-ghost flex items-center justify-center relative"
+                aria-label="Open cart"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <motion.span
