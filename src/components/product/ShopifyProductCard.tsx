@@ -132,7 +132,7 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
               <button
                 key={i}
                 onClick={(e) => handleColorClick(e, color)}
-                className="w-7 h-7 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
+                className="w-5 h-5 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
                 style={{
                   backgroundColor: (() => {
                     try {
@@ -146,7 +146,6 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
                   })()
                 }}
                 title={color}
-                aria-label={`Select ${color} variant`}
               />
             ))}
             {(node.options.find(opt => opt.name === "Color")?.values.length || 0) > 5 && (

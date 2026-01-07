@@ -56,13 +56,13 @@ export const Footer = () => {
               Premium streetwear for those who dare to be different. Stand out. Be authentic.
             </p>
             <div className="flex gap-4 mt-6">
-              <a href="https://www.instagram.com/oppozite.eg?igsh=aG40MDZhNTZobWdn&utm_source=qr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/oppozite.eg?igsh=aG40MDZhNTZobWdn&utm_source=qr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://www.facebook.com/share/1ZtnxAUmdd/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors" aria-label="Facebook">
+              <a href="https://www.facebook.com/share/1ZtnxAUmdd/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://www.tiktok.com/@oppozite.eg?_r=1&_t=ZS-928atypcjH0" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors" aria-label="TikTok">
+              <a href="https://www.tiktok.com/@oppozite.eg?_r=1&_t=ZS-928atypcjH0" target="_blank" rel="noopener noreferrer" className="p-2 border border-background/30 hover:bg-background hover:text-foreground transition-colors">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -121,7 +121,7 @@ export const Footer = () => {
 
       {/* Bottom */}
       <div className="border-t border-background/20">
-        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/80">
+        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/40">
           <p>© 2026 <b style={{ color: "#fff" }}>Oppozite</b>. Made with <span style={{ color: "#fff" }}>❤️</span> by <a href="https://fahdscode.me" style={{ color: "#fff" }}>Fahd's Code</a></p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-background transition-colors">Privacy</Link>
