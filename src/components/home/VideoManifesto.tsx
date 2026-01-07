@@ -15,7 +15,7 @@ export const VideoManifesto = () => {
                     className="w-full h-full object-cover"
                 >
                     <source
-                        src="/If this set isn’t in your closet yet… wydLimited drops only — grab your set before it’s gone.mp4"
+                        src="/vid.MOV"
                         type="video/mp4"
                     />
                     {/* Fallback for browsers that don't support video */}
