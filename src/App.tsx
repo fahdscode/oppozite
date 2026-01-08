@@ -26,6 +26,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 
 
+import Countdown from "./pages/Countdown";
+
 const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
@@ -40,6 +42,7 @@ const AnimatedRoutes = () => {
         <Route path="/collections" element={<Collections />} />
         <Route path="/about" element={<About />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/countdown" element={<Countdown />} />
 
 
         {/* Footer Pages */}
