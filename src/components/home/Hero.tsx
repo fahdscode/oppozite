@@ -54,25 +54,19 @@ export const Hero = () => {
         }} />
       </motion.div>
 
-      {/* Left Model */}
-      <motion.img
-        src="/hero-model-left.png"
-        alt="Model"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-0 left-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block grayscale"
-      />
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover -z-0 opacity-100"
+      >
+        <source src="/Hero.mp4" type="video/mp4" />
+      </video>
 
-      {/* Right Model */}
-      <motion.img
-        src="/hero-model-right.png"
-        alt="Model"
-        initial={{ opacity: 0, x: 100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-0 right-0 w-[35vh] lg:w-[65vh] max-h-[85vh] object-contain object-bottom -z-0 hidden md:block grayscale"
-      />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/50 -z-0" />
 
       <motion.div style={{ y: y1 }} className="container relative z-10 py-32">
         <div className="max-w-5xl mx-auto text-center">
