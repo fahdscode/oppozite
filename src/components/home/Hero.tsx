@@ -121,7 +121,7 @@ export const Hero = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link
-              to="/shop"
+              to="/shop?collection=shop-all"
               className="group bg-background text-foreground px-10 py-5 text-sm tracking-widest uppercase font-medium flex items-center gap-3 hover:gap-5 transition-all"
             >
               Shop Now
