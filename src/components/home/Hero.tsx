@@ -66,7 +66,7 @@ export const Hero = () => {
       </video>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 -z-0" />
+      <div className="absolute inset-0 bg-black/70 -z-0" />
 
       <motion.div style={{ y: y1 }} className="container relative z-10 py-32">
         <div className="max-w-5xl mx-auto text-center">
