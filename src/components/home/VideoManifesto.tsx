@@ -41,7 +41,7 @@ export const VideoManifesto = () => {
                         We don't just sell clothes; we provide the attitude.
                     </p>
                     <Link
-                        to="/shop?collection=shop-all"
+                        to="/shop"
                         className="inline-block border border-white px-10 py-4 text-sm tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-300"
                     >
                         Join The Movement
