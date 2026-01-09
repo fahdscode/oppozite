@@ -563,6 +563,13 @@ export async function createStorefrontCheckout(items: ShopifyCartItem[]): Promis
   }
 
   const url = new URL(cart.checkoutUrl);
+
+  // Force the domain to match our configured shopify domain
+  // This handles cases where the primary domain is the headless site itself
+  if (SHOPIFY_STORE_PERMANENT_DOMAIN) {
+    url.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
+  }
+
   url.searchParams.set('channel', 'online_store');
   return url.toString();
 }
