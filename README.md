@@ -64,6 +64,6 @@ To get a local copy up and running, follow these simple steps.
 
 ## © Copyright
 
-© 2025 Fahd's Code. All rights reserved.
+© 2026 Fahd's Code. All rights reserved.
 
 [fahdscode.me](https://fahdscode.me)
