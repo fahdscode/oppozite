@@ -31,37 +31,33 @@ import Countdown from "./pages/Countdown";
 const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
-  const location = useLocation();
-
   return (
-    <AnimatePresence mode="sync">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/new" element={<NewArrivals />} />
-        <Route path="/collections" element={<Collections />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/countdown" element={<Countdown />} />
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/shop" element={<Shop />} />
+      <Route path="/new" element={<NewArrivals />} />
+      <Route path="/collections" element={<Collections />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/product/:id" element={<ProductDetail />} />
+      <Route path="/countdown" element={<Countdown />} />
 
 
-        {/* Footer Pages */}
-        <Route path="/best-sellers" element={<BestSellers />} />
+      {/* Footer Pages */}
+      <Route path="/best-sellers" element={<BestSellers />} />
 
-        <Route path="/gift-cards" element={<GiftCards />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/shipping" element={<Shipping />} />
-        <Route path="/returns" element={<Returns />} />
-        <Route path="/size-guide" element={<SizeGuide />} />
-        <Route path="/sustainability" element={<Sustainability />} />
-        <Route path="/careers" element={<Careers />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
+      <Route path="/gift-cards" element={<GiftCards />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/shipping" element={<Shipping />} />
+      <Route path="/returns" element={<Returns />} />
+      <Route path="/size-guide" element={<SizeGuide />} />
+      <Route path="/sustainability" element={<Sustainability />} />
+      <Route path="/careers" element={<Careers />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
