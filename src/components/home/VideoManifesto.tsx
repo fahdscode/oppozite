@@ -7,23 +7,20 @@ export const VideoManifesto = () => {
             {/* Video Background */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-black/40 z-10" />
-                <div
-                    className="w-full h-full"
-                    dangerouslySetInnerHTML={{
-                        __html: `
-                        <video
-                            autoplay
-                            loop
-                            muted
-                            playsinline
-                            class="w-full h-full object-cover"
-                        >
-                            <source src="/VERT_vid.mp4" type="video/mp4" />
-                            <div class="w-full h-full bg-neutral-900"></div>
-                        </video>
-                        `,
-                    }}
-                />
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                >
+                    <source
+                        src="/VERT_vid.mp4"
+                        type="video/mp4"
+                    />
+                    {/* Fallback for browsers that don't support video */}
+                    <div className="w-full h-full bg-neutral-900" />
+                </video>
             </div>
 
             <div className="container relative z-20 text-center text-white">
