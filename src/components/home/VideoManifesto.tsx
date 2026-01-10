@@ -1,38 +1,29 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
 
 export const VideoManifesto = () => {
-    const videoRef = useRef<HTMLVideoElement>(null);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.play().catch((error) => {
-                console.log("Video autoplay blocked:", error);
-            });
-        }
-    }, []);
-
     return (
         <section className="relative h-[80vh] w-full overflow-hidden flex items-center justify-center">
             {/* Video Background */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-black/40 z-10" />
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                >
-                    <source
-                        src="/VERT_vid.mp4"
-                        type="video/mp4"
-                    />
-                    {/* Fallback for browsers that don't support video */}
-                    <div className="w-full h-full bg-neutral-900" />
-                </video>
+                <div
+                    className="w-full h-full"
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                        <video
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            class="w-full h-full object-cover"
+                        >
+                            <source src="/VERT_vid.mp4" type="video/mp4" />
+                            <div class="w-full h-full bg-neutral-900"></div>
+                        </video>
+                        `,
+                    }}
+                />
             </div>
 
             <div className="container relative z-20 text-center text-white">
