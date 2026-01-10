@@ -13,7 +13,7 @@ export const VideoManifesto = () => {
                     muted
                     playsInline
                     className="w-full h-full object-cover"
-                    poster="/video-manifesto-poster.png"
+                    poster="/manifesto.png"
                 >
                     <source
                         src="/VERT_vid.mp4"
