@@ -140,6 +140,7 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
         <div
           ref={ref}
           className={cn("flex", orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col", className)}
+          style={{ touchAction: "pan-y pinch-zoom" }}
           {...props}
         />
       </div>

@@ -124,38 +124,39 @@ export const ShopifyProductCard = ({ product, index = 0 }: ShopifyProductCardPro
             </span>
           )}
         </div>
-
-        {/* Color Pills */}
-        {node.options.find(opt => opt.name === "Color") && (
-          <div className="flex gap-2 mt-3">
-            {node.options.find(opt => opt.name === "Color")?.values.slice(0, 5).map((color, i) => (
-              <button
-                key={i}
-                onClick={(e) => handleColorClick(e, color)}
-                className="w-5 h-5 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
-                style={{
-                  backgroundColor: (() => {
-                    try {
-                      const variant = node.variants?.edges?.find(v =>
-                        v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === color)
-                      );
-                      return getColorValue(color, variant?.node?.colorCode?.value);
-                    } catch (e) {
-                      return getColorValue(color);
-                    }
-                  })()
-                }}
-                title={color}
-              />
-            ))}
-            {(node.options.find(opt => opt.name === "Color")?.values.length || 0) > 5 && (
-              <span className="text-[10px] text-muted-foreground flex items-center">
-                +{(node.options.find(opt => opt.name === "Color")?.values.length || 0) - 5}
-              </span>
-            )}
-          </div>
-        )}
       </Link>
+
+      {/* Color Pills - Outside Link to prevent invalid nesting and event conflicts */}
+      {node.options.find(opt => opt.name === "Color") && (
+        <div className="flex gap-2 mt-3">
+          {node.options.find(opt => opt.name === "Color")?.values.slice(0, 5).map((color, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={(e) => handleColorClick(e, color)}
+              className="w-5 h-5 rounded-full border border-border hover:scale-110 transition-transform focus:outline-none focus:ring-1 focus:ring-foreground"
+              style={{
+                backgroundColor: (() => {
+                  try {
+                    const variant = node.variants?.edges?.find(v =>
+                      v?.node?.selectedOptions?.some(opt => opt.name === "Color" && opt.value === color)
+                    );
+                    return getColorValue(color, variant?.node?.colorCode?.value);
+                  } catch (e) {
+                    return getColorValue(color);
+                  }
+                })()
+              }}
+              title={color}
+            />
+          ))}
+          {(node.options.find(opt => opt.name === "Color")?.values.length || 0) > 5 && (
+            <span className="text-[10px] text-muted-foreground flex items-center">
+              +{(node.options.find(opt => opt.name === "Color")?.values.length || 0) - 5}
+            </span>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -16,6 +16,7 @@ export const Marquee = () => {
             repeatType: "loop"
           }}
           className="flex whitespace-nowrap"
+          style={{ willChange: 'transform' }}
         >
           <span className="text-xs tracking-[0.3em] uppercase whitespace-nowrap hover:text-background/70 transition-colors cursor-default px-4">
             {repeatedText}
