@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { event } from "@/lib/meta-pixel";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Minus, Plus, Loader2 } from "lucide-react";
 import { useShopifyProduct, useShopifyProducts } from "@/hooks/useShopifyProducts";
@@ -39,6 +40,17 @@ const ProductDetail = () => {
         }
       });
       setSelectedOptions(initialOptions);
+
+      // Track ViewContent
+      if (product) {
+        event('ViewContent', {
+          content_name: product.title,
+          content_ids: [product.id],
+          content_type: 'product',
+          value: product.variants?.edges?.[0]?.node?.price?.amount,
+          currency: product.variants?.edges?.[0]?.node?.price?.currencyCode || 'EGP',
+        });
+      }
     }
   }, [product]);
 
@@ -97,6 +109,14 @@ const ProductDetail = () => {
       quantity,
       selectedOptions: selectedVariant.selectedOptions,
       quantityAvailable: selectedVariant.quantityAvailable,
+    });
+
+    event('AddToCart', {
+      content_name: product.title,
+      content_ids: [selectedVariant.id],
+      content_type: 'product',
+      value: parseFloat(selectedVariant.price.amount) * quantity,
+      currency: selectedVariant.price.currencyCode,
     });
 
     toast.success("Added to bag", {
@@ -320,8 +340,8 @@ const ProductDetail = () => {
                       }}
                       disabled={quantity >= (selectedVariant?.quantityAvailable ?? Infinity)}
                       className={`w-12 h-12 flex items-center justify-center transition-colors ${quantity >= (selectedVariant?.quantityAvailable ?? Infinity)
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-secondary"
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-secondary"
                         }`}
                       whileTap={{ scale: 0.9 }}
                     >

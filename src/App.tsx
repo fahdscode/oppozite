@@ -63,6 +63,7 @@ const AnimatedRoutes = () => {
 
 import ScrollToTop from "./components/ScrollToTop";
 import { MagneticCursor } from "./components/ui/MagneticCursor";
+import { MetaPixel } from "@/components/MetaPixel";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -73,6 +74,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <MetaPixel />
         <AnimatedRoutes />
       </BrowserRouter>
     </TooltipProvider>

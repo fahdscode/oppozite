@@ -3,6 +3,7 @@ import { X, Minus, Plus, ShoppingBag, Loader2, ExternalLink } from "lucide-react
 import { useCartStore } from "@/stores/cartStore";
 import { Link } from "react-router-dom";
 import { formatShopifyPrice } from "@/lib/shopify";
+import { event } from "@/lib/meta-pixel";
 
 export const CartDrawer = () => {
   const {
@@ -21,6 +22,13 @@ export const CartDrawer = () => {
   const total = totalPrice();
 
   const handleCheckout = async () => {
+    event('InitiateCheckout', {
+      content_ids: items.map(item => item.variantId),
+      content_type: 'product',
+      value: total,
+      currency: items[0]?.price?.currencyCode || 'USD',
+      num_items: itemCount,
+    });
     await createCheckout();
   };
 
@@ -142,8 +150,8 @@ export const CartDrawer = () => {
                                 }}
                                 disabled={item.quantity >= (item.quantityAvailable ?? Infinity)}
                                 className={`p-2 transition-colors ${item.quantity >= (item.quantityAvailable ?? Infinity)
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "hover:bg-muted"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "hover:bg-muted"
                                   }`}
                               >
                                 <Plus className="w-3 h-3" />
